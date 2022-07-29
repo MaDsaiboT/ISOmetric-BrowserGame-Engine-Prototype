@@ -1,0 +1,261 @@
+:root {
+  --text-highlighted: darkorange;
+}
+
+@font-face {
+  font-family: myFirstFont;
+  src: url(fonts/BigShouldersDisplay-Regular.ttf);
+}
+
+
+
+html,body,#ui{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  font-size: 16px;
+  font-family: myFirstFont;
+}
+
+script{
+  display: none;
+}
+
+body {
+  background: #333;
+}
+
+h1{
+  margin: 0;
+  padding: 0;
+  font-size: 5em;
+  white-space: nowrap;
+}
+
+a:visited, a{
+  text-decoration: none !important;
+  color: var(--text-highlighted);
+  white-space: nowrap;
+}
+
+#container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+canvas {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: absolute;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+ruler{
+  position: absolute;
+  background: red;
+  display: block;
+  height: 100vh;
+  width: 3px;
+  left: 50vw;
+  opacity: 0.5;
+  user-select: none;
+  display: none;
+}
+
+#canvasMapBuffer{
+  position: relative;
+  user-select: none;
+  background: transparent;
+  z-index: 3;
+}
+
+#canvasMapBufferContainer{
+  transform-origin: top left;
+  transform: scale(.06);
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  z-index: 4;
+
+  background: rgba(20,20,20,0.8);
+
+  border-top-right-radius: 120px;
+  border-bottom-right-radius: 120px;
+  backdrop-filter: blur(50px) grayscale(0.9);
+  user-select: none;
+
+}
+
+#viewPortIndicator{
+  position: absolute;
+  top: 0;
+  left: 0px;
+  box-sizing: border-box;
+  border: 5px solid #0f0;
+  z-index: 5;
+  border-radius: 120px;
+}
+
+#canvasMap {
+  z-index: 1;
+}
+
+#canvasInteract {
+  z-index: 2;
+}
+
+
+
+.hidden {
+  display: none !important;
+}
+
+
+#console div {
+  height: 200px;
+  position: relative;
+  white-space: pre;
+  vertical-align: top;
+  overflow-y: scroll;
+}
+
+
+
+kbk {
+  text-transform: uppercase;
+  display: inline-block;
+  margin: 4px;
+  padding: 6px;
+  min-width: 10px;
+  text-align: left;
+  border-radius: 5px;
+  border:  1px solid #333;
+  box-shadow: 1px 3px 4px 1px #444;
+}
+
+#jasonMapData {
+  color: limegreen;
+  padding: 15px;
+  width: 600px;
+  height: 500px;
+  background: #222;
+  border-radius: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  user-select: text !important;
+  overflow-x: hidden;
+}
+
+#statusBarRight{
+  text-align: right;
+  min-width: 100px;
+  display: block;
+  margin-left: auto !important;
+  margin-right: 10px !important;
+  font-size: 0.6em;
+  font-weight: 900;
+  color: rgba(2, 2, 2, .7);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+ form {
+    margin: 50px auto;
+    height: 100%;
+    max-width: 500px;
+    padding: 0;
+    display: grid;
+    grid: auto / 1fr 1fr;
+    column-gap: 5rem;
+    row-gap: 5px;
+    white-space: nowrap;
+  }
+
+  form label,
+  form span {
+    margin-top: 10px;
+  }
+
+  form label{
+    letter-spacing: 2px;
+  }
+
+  form input {
+    grid-column: span 2;
+    background: #222;
+    box-shadow: 0 0 1px 1px #333;
+    border:none;
+    padding: .2em .7em;
+    font-size: 1.5em;
+    border-radius: .2em;
+    color: var(--text-highlighted);
+  }
+
+  form button {
+    color: #bbb;
+    font-weight: bolder;
+    margin-top: 1em;
+    grid-column: span 2;
+    padding: .2em;
+    font-size: 1.8em;
+    border-radius: .2em;
+    border:none;
+    box-shadow: 0 0 1px 1px #333;
+    background-color: #444;
+  }
+
+  form button:hover{
+    background-color: darkgreen;
+  }
+
+  form input:focus {
+    outline: none;
+  }
+
+.loader{
+    z-index: 99;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px; height: 250px;
+    display: block;
+
+    stroke-dasharray: 22;
+    stroke-dashoffset: 1;
+    animation: dash 4s cubic-bezier(0.455, 0.03, 0.515, 0.955) 
+      infinite alternate-reverse;
+  }
+
+  @keyframes dash{
+    to {stroke-dashoffset: 250;}
+  }

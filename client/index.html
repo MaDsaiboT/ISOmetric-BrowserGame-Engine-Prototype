@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Isometric Game Prototype</title>
+    <link rel="stylesheet" type="text/css"      href="css/main.css"    defer>
+    <link rel="stylesheet" type="text/css"      href="css/content.css" defer>
+    <link rel="stylesheet" type="text/css"      href="css/ui.css"      defer>
+    <link rel="icon"       type="image/x-icon"  href="/img/favicon.ico"  >
+  </head>
+  <body>
+    <div id="container">
+      <div id="canvasMapBufferContainer">
+        <canvas id="canvasMapBuffer" height="1500px" width="4000px" class=""></canvas>
+        <div id="viewPortIndicator"></div>
+      </div>
+      <canvas id="canvasMap" class=""></canvas>
+      <canvas id="canvasInteract"></canvas>
+      <div id="ui" class="">
+        <header>
+          <nav>
+            <a href="/mapData"  id="headerNav01" data-link>mapData</a>
+          </nav>
+          <nav id="userActions">
+          </nav>
+        </header>
+        <main class="">
+          <svg id="loader" class="loader" width="156" height="156" viewBox="0 0 50 50">
+            <polygon 
+              stroke-width="1"
+              stroke="#fff"
+              fill="none"
+              points="20,1 40,40 1,40"
+            />
+          </svg> 
+          <div id="toolTip" class="hidden">tooltip</div>
+          <div class="menu hidden">
+            <h1>Paused</h1>
+            <p> hit <kbk>p</kbk> to continue</p>
+          </div>
+          <div id="jasonMapData" class="hidden"></div>
+          <section id="contentWraper" class="hidden">
+            <span id="contentClose">X</span>
+            <div id="content"></div>
+          </section>
+        </main>
+        <footer>
+          <statusbar>
+            <fps data-binding="fps"></fps>
+            <mousePos data-binding="mousePos">ffff</mousePos>
+          </statusbar>
+          <span id="statusBarRight" data-binding="framesSinceStart">0</span>
+          <copy>&copy; MaDsaiboT</copy>
+        </footer>
+      </div>
+    </div>
+    <img src="img/tiles/tile128X128.png" id="tile128X128" class="hidden">
+    <script type="module" src="js/main.js" defer></script>
+  </body>
+  <template id="loader">
+    <svg width="200" height="250" viewBox="0 0 50 50">
+      <polygon 
+        stroke-width="1"
+        stroke="#fff"
+        fill="none"
+        points="20,1 40,40 1,40"
+      />
+      <text fill="#fff" x="6" y="50">Loading</text>
+    </svg> 
+  </template>
+</html>
+
+

@@ -1,0 +1,789 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"con",
+				"continue"
+			],
+			[
+				"hi",
+				"hightMap"
+			],
+			[
+				"tile",
+				"tileStack"
+			],
+			[
+				"overflow",
+				"overflow-x"
+			],
+			[
+				"c",
+				"col"
+			],
+			[
+				"co",
+				"textContent"
+			],
+			[
+				"t",
+				"toggle"
+			],
+			[
+				"cls",
+				"classList"
+			],
+			[
+				"js",
+				"jasonMapData"
+			],
+			[
+				"draw",
+				"drawViewport"
+			],
+			[
+				"dr",
+				"drawing"
+			],
+			[
+				"map",
+				"canvasMapBuffer"
+			],
+			[
+				"gam",
+				"gameStates"
+			],
+			[
+				"ga",
+				"gameStates"
+			],
+			[
+				"L",
+				"LOADING"
+			],
+			[
+				"vir",
+				"viewPortChanged"
+			],
+			[
+				"viewPort",
+				"viewPortChanged"
+			],
+			[
+				"view",
+				"viewPortChanged"
+			],
+			[
+				"vi",
+				"visualViewport"
+			],
+			[
+				"s",
+				"style"
+			],
+			[
+				"vie",
+				"viewPortOffsetLast"
+			],
+			[
+				"bor",
+				"border"
+			],
+			[
+				"border-bottom-",
+				"border-bottom-left-radius"
+			],
+			[
+				"ne",
+				"nextFrame"
+			],
+			[
+				"tran",
+				"transform"
+			],
+			[
+				"re",
+				"restore"
+			],
+			[
+				"sa",
+				"save"
+			],
+			[
+				"canvas",
+				"canvasMapBuffer"
+			],
+			[
+				"trans",
+				"transform"
+			],
+			[
+				"ctx",
+				"ctxMapBuffer"
+			],
+			[
+				"canv",
+				"canvasMapBuffer"
+			],
+			[
+				"wi",
+				"width"
+			],
+			[
+				"fill",
+				"fillStyle"
+			],
+			[
+				"fil",
+				"fillRect"
+			],
+			[
+				"w",
+				"width"
+			],
+			[
+				"a",
+				"autoPause"
+			],
+			[
+				"la",
+				"lastMapPos"
+			],
+			[
+				"m",
+				"mousePos"
+			],
+			[
+				"tex",
+				"text-transform"
+			],
+			[
+				"min",
+				"min-width"
+			],
+			[
+				"in",
+				"inline-block"
+			],
+			[
+				"uni",
+				"unixTimeLast"
+			],
+			[
+				"fon",
+				"font-size"
+			],
+			[
+				"ele",
+				"elemToolTip"
+			],
+			[
+				"box",
+				"box-shadow"
+			],
+			[
+				"border",
+				"border-radius"
+			],
+			[
+				"get",
+				"getElementById"
+			],
+			[
+				"close",
+				"closePath"
+			],
+			[
+				"border-",
+				"border-radius"
+			],
+			[
+				"jus",
+				"justify-items"
+			],
+			[
+				"ke",
+				"keypress"
+			],
+			[
+				"j",
+				"jsondata"
+			],
+			[
+				"cons",
+				"console"
+			],
+			[
+				"mous",
+				"elemMousePos"
+			],
+			[
+				"r",
+				"requestAnimationFrame"
+			],
+			[
+				"margin",
+				"margin-bottom"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"grow",
+				"flex-grow"
+			],
+			[
+				"ta",
+				"table-cell"
+			],
+			[
+				"inn",
+				"innerHTML"
+			],
+			[
+				"q",
+				"querySelector"
+			],
+			[
+				"hea",
+				"header"
+			],
+			[
+				"margin-",
+				"margin-right"
+			],
+			[
+				"fle",
+				"flex-direction"
+			],
+			[
+				"ju",
+				"justify-items"
+			],
+			[
+				"flex",
+				"flex-shrink"
+			],
+			[
+				"flex-",
+				"flex-direction"
+			],
+			[
+				"dis",
+				"display"
+			],
+			[
+				"padd",
+				"padding-left"
+			],
+			[
+				"fo",
+				"font-family"
+			],
+			[
+				"ge",
+				"gameLoop"
+			],
+			[
+				"i",
+				"innerWidth"
+			],
+			[
+				"sour",
+				"sourceCount"
+			],
+			[
+				"add",
+				"address"
+			],
+			[
+				"th",
+				"throw"
+			],
+			[
+				"qu",
+				"query"
+			],
+			[
+				"nu",
+				"numbers"
+			],
+			[
+				"A",
+				"Array"
+			],
+			[
+				"Adress",
+				"Address"
+			],
+			[
+				"l",
+				"length"
+			],
+			[
+				"boder",
+				"border-radius"
+			],
+			[
+				"li",
+				"li"
+			],
+			[
+				"h",
+				"html"
+			],
+			[
+				"pr",
+				"print"
+			],
+			[
+				"up",
+				"uploadedFile"
+			],
+			[
+				"no",
+				"notices"
+			],
+			[
+				"marg",
+				"margin-right\tproperty"
+			],
+			[
+				"mar",
+				"margin-top\tproperty"
+			],
+			[
+				"cs",
+				"csvData"
+			],
+			[
+				"line",
+				"linesep"
+			],
+			[
+				"__",
+				"__del__"
+			],
+			[
+				"se",
+				"stream"
+			],
+			[
+				"im",
+				"import"
+			],
+			[
+				"std",
+				"stderrOld"
+			],
+			[
+				"f",
+				"from"
+			],
+			[
+				"I",
+				"ips"
+			],
+			[
+				"ip",
+				"ipv4Base"
+			],
+			[
+				"de",
+				"devices"
+			],
+			[
+				"pho",
+				"phoneIP"
+			],
+			[
+				"lo",
+				"localVars"
+			],
+			[
+				"p",
+				"print"
+			],
+			[
+				"tas",
+				"taskName"
+			],
+			[
+				"tan",
+				"taskFuncs"
+			],
+			[
+				"_",
+				"_output"
+			],
+			[
+				"sta",
+				"_status"
+			],
+			[
+				"task",
+				"taskFuncs"
+			],
+			[
+				"pp",
+				"pprint"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"ter",
+				"Terminus: List Shells"
+			],
+			[
+				"termin",
+				"Terminus: Toggle Panel"
+			],
+			[
+				"Package C",
+				"Package Control: Install Package"
+			],
+			[
+				"vmen",
+				"View: Toggle Minimap"
+			],
+			[
+				"Pack",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 246.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/M/Coding/JSGames/ECS",
+		"/M/Coding/JSGames/ECS/css",
+		"/M/Coding/JSGames/ECS/js",
+		"/M/Coding/JSGames/ECS/js/components"
+	],
+	"file_history":
+	[
+		"/M/Coding/JSGames/ECS/index.html",
+		"/M/Coding/JSGames/ECS/js/main.js",
+		"/M/Coding/JSGames/ECS/css/main.css",
+		"/M/Coding/JSGames/prototype/js/map.js",
+		"/M/Coding/JSGames/ECS/js/ECS.js",
+		"/M/Coding/JSGames/ECS/js/inpuTracker.js",
+		"/C/Users/graup/AppData/Roaming/Sublime Text 3/Packages/PlainTasks/messages/Tutorial.todo",
+		"/M/Coding/JSGames/ECS/js/game.js",
+		"/M/Coding/JSGames/ECS/js/components/drawable.js",
+		"/C/Users/graup/AppData/Roaming/Sublime Text 3/Packages/User/ColorHighlighter.sublime-settings",
+		"/C/Users/graup/AppData/Roaming/Sublime Text 3/Packages/User/ColorPicker.sublime-settings",
+		"/C/Users/graup/AppData/Roaming/Sublime Text 3/Packages/Color Highlighter/ColorHighlighter.sublime-settings",
+		"/C/Users/graup/AppData/Roaming/Sublime Text 3/Packages/User/Terminal.sublime-settings",
+		"/C/Users/graup/AppData/Roaming/Sublime Text 3/Packages/ColorPicker/ColorPicker.sublime-settings",
+		"/M/Coding/JSGames/prototype/js/systems/userInput.js",
+		"/M/Coding/JSGames/prototype/js/userInput.js",
+		"/M/Coding/JSGames/prototype/css/main.css",
+		"/C/Users/graup/Documents/Space Engineers Scripts/Dev/tabletest.cs",
+		"/M/Downloads/Bewerbngsunterlagen_Graupner/Bewerbngsunterlagen Graupner/Exposee/v13 Schachbaton/javascript.js",
+		"/F/SteamLibrary/steamapps/workshop/content/244850/2443062653/Data/CoolingSystem_CubeBlocks.sbc",
+		"/C/Users/graup/AppData/Roaming/SpaceEngineers/Saves/76561198025099205/Pertam Creative XII klang maybe/Sandbox_config.sbc",
+		"/C/Users/graup/AppData/Roaming/SpaceEngineers/Storage/DefenseShields.cfg",
+		"/C/Users/graup/AppData/Roaming/SpaceEngineers/Storage/584639195.sbm_PowerTransmission/PowerTransmitters.sav",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Items/Stackable/WoodenArrows.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Items/Stackable/Stone.octdat",
+		"/M/Downloads/NobleFates-MoreWood-main/DGD-MoreWood2x 2.0 550W/MoreWood2x.octdat",
+		"/C/Users/graup/AppData/LocalLow/Xobermon, LLC/Noble Fates/Mods/FasterTrees/FasterTrees.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Commands/Commands.octdat",
+		"/C/Users/graup/AppData/LocalLow/Xobermon, LLC/Noble Fates/Mods/NobleFates-BetterStats-main/BetterStats.octdat",
+		"/C/Users/graup/AppData/LocalLow/Xobermon, LLC/Noble Fates/Mods/NobleFates-StacksandBuffs-main/StacksBuffs.octdat",
+		"/C/Users/graup/Desktop/Alphacoders_Interview_DIPKO.txt",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/ExceptionDetectorUpdated/settings.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Configs/Extraplanetary Launchpads/KPBS_MM_EPL.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Parts/Extraplanetary Launchpads/Launchpad.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/Squad/Parts/Resources/LargeTank/LargeTank.cfg",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Debris/Refuse.octdat",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/Squad/Parts/Resources/SmallTank/SmallTank.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/Squad/Parts/Cargo/StorageUnits/CargoStorageUnit.cfg",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Characters/Human.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Characters/Orc.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Characters/CharacterStats.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Settings/GlobalSettings.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Projectiles/ArrowProjectiles.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Debris/Scat.octdat",
+		"/F/SteamLibrary/steamapps/common/Noble Fates/Noble Fates_Data/StreamingAssets/OctDats/Moments/ComplaintMoments.octdat",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_748953B4-LessSimpleISRU-0.4.zip/Gamedata/LSI/Patches/Resources_RSS.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_A5BC10FD-EasyLaunchpads-1.0.zip/GameData/EasyLaunchpads/Extraplanetarylaunchpads.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_5B4D4AE9-RationalResources-1.32.zip/GameData/RationalResourcesCompanion/CRP/Opt-in_OreTanks.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_5B4D4AE9-RationalResources-1.32.zip/Extras/RationalResourcesSquad/README.md",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_C46CAAD5-KerbalPlanetaryBaseSystems-v1.6.14.zip/GameData/PlanetaryBaseInc/Localization/en-us.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_C46CAAD5-KerbalPlanetaryBaseSystems-v1.6.14.zip/GameData/PlanetaryBaseInc/BaseSystem/Parts/Electrical/Reactor.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_1053FB21-ExtraPlanetaryLaunchpads-6.99.0.0.zip/ExtraplanetaryLaunchpads/EL_MM.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_1053FB21-ExtraPlanetaryLaunchpads-6.99.0.0.zip/ExtraplanetaryLaunchpads/Settings.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_38F2A163-KSPCommunityFixes-1.5.0.zip/GameData/KSPCommunityFixes/Settings.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/KSP.log",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/NotSoSimpleConstruction/Patches/SurveyStationForAllCrewed.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/NotSoSimpleConstruction/Patches/SurveyStation.cfg",
+		"/M/Dropbox/Games/ksp modpack/2021-12-12.ckan",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Configs/Kerbalism/KPBS_MM_Kerbalism_Science.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Configs/Kerbalism/KPBS_MM_Kerbalism_Habitation.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/ResourceConfigs/Ammonia.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/System/Habitat.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/System/Sickbay.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/System/Deploy.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/System/Misc.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/System/Resources.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/Support/Buffalo.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/Support/B9PartSwitch.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/Support/CCK.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/Support/WildBlueTools.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Configs/CLS/KPBS_MM_CLS.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/System/OldScience.cfg.disabled",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/Support/EPL.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Configs/CTT/KPBS_MM_CTT.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Configs/Realfuels/KPBS_MM_RealFuels.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/Support/Kerbalow.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/KerbalismConfig/Support/USI/USI_Tools.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/ExtraplanetaryLaunchpads/Parts/smelter/part.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Parts/LifeSupport/Container_IFILS_big.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Resources/KPBS_Resource_Hydrogen.cfg",
+		"/C/Users/graup/Desktop/typingEffect/index.html",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/NameList.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Patches/ROfix.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Parts/LifeSupport/Container_Hydrogen.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/PlanetaryBaseInc/ModSupport/Parts/LifeSupport/Container_Sabatier.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Patches/NearFutureConstructionFix.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Patches/USI_NF_Mode.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Patches/NFTradiators.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/RationalResourcesCompanion/CRP/RR_Freezer-Heaters.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Resources/ResourceDefs.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Resources/Comet.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Resources/CommonResources.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Resources/ElectricPropellants.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/Resources/CRPResources.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/WarpPlugin/WarpPluginSettings.cfg",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/Logs/ModuleManager/MMPatch.log",
+		"/F/SteamLibrary/steamapps/common/Kerbal Space Program/GameData/RationalResourcesCompanion/CRP/Opt-in_OreTanks.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_5B4D4AE9-RationalResources-1.32.zip/GameData/RationalResourcesCompanion/00_OreTanks_Opt-in.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_6CFE91A6-Hangar-3.6.2.zip/GameData/Hangar/ATM.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_6CFE91A6-Hangar-3.6.2.zip/GameData/Hangar/Parts/Mk3Hangar.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_6CFE91A6-Hangar-3.6.2.zip/GameData/Hangar/MM/Squad.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_8605EE6F-MoarKerbalsParts-0.9.99.0.zip/GameData/KerbthulhuKineticsProgram/MoarKerbalsParts/Parts/moar-kuddleshack.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_64351BE1-MoarKerbals-1.1.1.0.zip/GameData/MoarKerbals/Patches/ScienceLab.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_64351BE1-MoarKerbals-1.1.1.0.zip/GameData/MoarKerbals/Patches/ResourceMods.cfg",
+		"/C/Users/graup/AppData/Local/Temp/Temp1_64351BE1-MoarKerbals-1.1.1.0.zip/GameData/MoarKerbals/Patches/CTT.cfg",
+		"/C/Users/graup/Desktop/typingEffect/style.css",
+		"/C/Users/graup/AppData/Roaming/Avorion/clientlog 2021-09-25 16-32-56.txt",
+		"/C/Users/graup/AppData/Roaming/Avorion/galaxies/defaultgalaxy - broken/sectors/251_1",
+		"/C/Users/graup/AppData/Roaming/Avorion/clientlog 2021-09-25 15-33-37.txt",
+		"/C/Users/graup/AppData/Roaming/Avorion/clientlog 2021-09-25 15-54-41.txt",
+		"/C/Users/graup/AppData/Roaming/Avorion/moddata/ResourceDisplay.lua",
+		"/C/Users/graup/Desktop/notes Sandra Löb.txt",
+		"/C/Users/graup/Desktop/notes (2).txt",
+		"/M/projects/quart/examples/todo_app/app/config.py",
+		"/M/projects/angular2021test/.browserslistrc",
+		"/M/projects/angular2021test/.editorconfig",
+		"/M/projects/sublimeTextProjects/angular2021test.sublime-project",
+		"/M/USB_backups/2021-04-30/python3-export-framework/exportReports/047_EUROGATE/output/test/2020-06-11_14_expFB.csv",
+		"/C/Users/graup/Documents/My Games/Stationeers/scripts/simple canister fill/instruction.xml",
+		"/C/Users/graup/AppData/Local/Temp/fz3temp-2/products.php",
+		"/G/Coding/MIPS (Stationeers)/simpleCanisterFill.s",
+		"/G/Coding/xampp/htdocs/RL24/import_atrikel/index.php",
+		"/C/Users/graup/AppData/Roaming/Sublime Merge/Packages/User/Preferences.sublime-settings",
+		"/C/Users/graup/AppData/Local/Temp/fz3temp-2/original_damen_sporen-set_waldhausen_20mm_2.jpg",
+		"/C/Users/graup/AppData/Local/Temp/fz3temp-2/error.log",
+		"/G/Downloads/Telegram Desktop/12.07.21/Webpge/index.html",
+		"/G/Downloads/Telegram Desktop/12.07.21/Webpge/Gallerie.html",
+		"/C/Users/graup/Downloads/KL_Kadi_weiss.csv"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"this.canvas"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"this.element"
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"folders":
+	[
+		{
+			"path": "M:\\Coding\\JSGames\\ECS"
+		}
+	],
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 68.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.899006757338,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.Terminus":
+	{
+		"height": 294.0
+	},
+	"output.doc":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 191.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
