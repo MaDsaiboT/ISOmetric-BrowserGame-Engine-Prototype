@@ -194,9 +194,23 @@ const formHandler = (form) => {
 
   if ( data.find(element => element.name == 'login') ) {
     const name = data.find( element => element.name == 'name' ).value;
-    if ( name.length > 2 ) router.navigateTo('/login/'+name);
+    if ( name.length > 2 ) router.navigateTo(`/login/${name}`);
   }
 }
+
+let isActiveContentModal = false;
+const showContentModal = () => {
+  if (isActiveContentModal) return;
+  contentWraper.classList.replace('hidden','active')
+  isActiveContentModal = true;
+}
+
+const hideContentModal = () => {
+  if (!isActiveContentModal) return;
+  contentWraper.classList.replace('active','hidden')
+  isActiveContentModal = false;
+}
+
 
 const navUserActions = document.getElementById('userActions');
 const content        = document.getElementById('content');
@@ -209,19 +223,19 @@ await loadHTML(navUserActions,'loggedOut.html');
 
 contentClose.addEventListener('click',e=>{
   window.history.replaceState(null, null, '/');
-  contentWraper.classList.replace('active','hidden')
+  hideContentModal();
 });
 
 router.addObserver({
   name: 'login', 
   callback: async (params,cur,last) => {
     console.log({cur,last});
-    if (cur.name == last.name) return true
-    contentWraper.classList.replace('active','hidden')
+    //if (cur.name != last.name) hideContentModal();
+
 
     if ( !params.name ) {
       const res = await loadHTML(content,'logIn.html')
-      contentWraper.classList.replace('hidden','active')
+      showContentModal();
     }
 
 
@@ -230,13 +244,15 @@ router.addObserver({
       router.loggedIn = true;
       navUserActions?.classList?.add('loggedIn');
       await loadHTML(navUserActions,'loggedIn.html');
-      contentWraper.classList.replace('active','hidden')
+      hideContentModal();
+
       //give the browser a chance to catch up the dom
       window.setTimeout(async ()=>{
         //update the proflile link
         document.querySelector('[href="/profile"]').href += `/${userName}`;
       },500);
     }
+
   }
 });
 
@@ -252,9 +268,9 @@ router.addObserver({
 router.addObserver({
   name: 'signup', 
   callback: async (params,cur,last) => {
-    contentWraper.classList.replace('active','hidden')
+    //hideContentModal();
     await loadHTML(content,'signUp.html');
-    contentWraper.classList.replace('hidden','active')
+    showContentModal();
   }
 },'signup');
 
