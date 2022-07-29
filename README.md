@@ -1,7 +1,7 @@
 # ISOmetric 2D BrowserGame-Engine Prototype
 
 Javascript game-engine for Isometric 2D
-RPG, Stragegy, and Simulation Games with multiplayer capability (utilising WEBsockets)
+RPG, Strategy, and Simulation Games with Multiplayer capability (utilising WEBsockets)
 
 AS of now the Server is build with the Flask Microframework and a simplified WEBsocket package
 it will most likely be swiched out with Quart 
