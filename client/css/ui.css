@@ -71,6 +71,7 @@
 
 #ui main {
   flex-grow: 1;
+  background: #333;
 }
 
 #ui main #toolTip{
