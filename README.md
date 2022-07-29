@@ -9,3 +9,6 @@ it will most likely be swiched out with Quart
 The Client is build in Pure Vanilla Javascript showcasing modern techniques used in
 Single Page Applications (SPA) like Routing, WebComponents and DataBinding 
 Without the need for Frameworks/Libaries like Angular or React
+
+
+![animation2](https://github.com/MaDsaiboT/ISOmetric-BrowserGame-Engine-Prototype/blob/master/__ScreenShots/Animation2.gif)
