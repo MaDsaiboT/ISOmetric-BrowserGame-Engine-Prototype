@@ -1,4 +1,3 @@
-
 const runstate = {
   PAUSED:  'paused',
   RUNNING: 'running',
@@ -21,15 +20,16 @@ const runstate = {
 }
 
 
-const gameStates = new Proxy({
+const states = new Proxy({
     fps: 0,
-    runstate: runstate.LOADING,
+    running: runstate.LOADING,
 
     _observers: [],
 
-    subscribe: (property, callback) => {
-      let obs = gameStates._observers
-      obs.push({property, callback});
+    subscribe: (name, property, callback) => {
+      name = states._observers.length + name;
+      console.log('Game.states ',`add observer ${name} for property ${property}` );
+      states._observers.push({name, property, callback});
       //console.log('subscribe',{property, callback})
       //console.log({obs})
     }
@@ -47,21 +47,22 @@ const gameStates = new Proxy({
       if (String(property).startsWith('_')) return
       const oldVal = target[property];
       const newVal = value;
+
+      if (newVal === oldVal) return true
       //validate 
       if (typeof newVal !== typeof oldVal) return false
-      //console.log({newVal,oldVal});
+      //console.log('Game.states',property,{newVal,oldVal});
       switch(property){
-        case 'runstate': 
-          if (!runstate.has(newVal)) 
+        case 'running': 
+          if (!runstate.has(newVal)) {
             console.warn(`invalid value "${newVal}"(${typeof newVal}) for gameStates.runstate`);
-          return true; 
-        break;
+            return true
+          } 
+          break;
       } 
-
-
-
+      target[property] = newVal;
       const observers = target._observers.filter(o => o.property === property);
-      target[property] = value;
+      console.log(target._observers)
       for (let observer of observers) observer.callback(newVal, oldVal);
       return true
     }
@@ -70,39 +71,28 @@ const gameStates = new Proxy({
   }
 );
 
-class Game {
-  constructor() {
-    this.gameStates = gameStates
+
+export class Game {
+  static runstate = runstate
+  constructor(){
+    this.states = states;
+    
+    this.pauseKey = 'KeyP';
+
+    window.addEventListener( 'keydown',  e => {
+      if (e.code === this.pauseKey) this.pause()
+    });
   }
 
+  pause() {
+    switch (this.states.running){
+      case runstate.LOADING: return;                                 break;
+      case runstate.PAUSED:  this.states.running = runstate.RUNNING; break;
+      case runstate.RUNNING: this.states.running = runstate.PAUSED;  break;
+    }
+  }
+  
+
+  
 }
 
-const instance = new Game();
-
-gameStates.subscribe('fps',(newVal,oldVal) => {
-  console.log('fps changed',{newVal,oldVal})}
-);
-
-instance.gameStates.fps ++;
-
-instance.gameStates.fps ++;
-
-instance.gameStates.fps ++;
-
-instance.gameStates.fps ++;
-
-console.log(gameStates.meep);
-
-gameStates.subscribe('runstate',(newVal,oldVal) => {
-  console.log('runstate changed',{newVal,oldVal})}
-);
-
-instance.gameStates.runstate = runstate.PAUSED;
-
-instance.gameStates.runstate = 'test';
-
-console.log('gameStates.runstate:',gameStates.runstate);
-
-
-export default instance
-export {instance as Game}

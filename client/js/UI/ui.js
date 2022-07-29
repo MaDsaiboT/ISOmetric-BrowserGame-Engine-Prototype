@@ -1,5 +1,7 @@
 import * as main  from '../main.js';
 import * as utils from '../_utils/utils.js';
+import {Game}     from '../GAME/game.js'
+
 
 const ui = {};
 
@@ -24,18 +26,6 @@ ui.elemMousePos  = document.querySelector('#ui footer mousePos');
 ui.jasonMapData  = document.getElementById('jasonMapData');
 
 
-headerNav01.addEventListener('click',e=>{
-  console.log('jasonMapData toogle');
-  jasonMapData.classList.toggle('hidden')
-})
-
-
-ui.main.addEventListener('mousemove', e => mousemove(e),);
-ui.main.addEventListener('mouseout',  e => mouseout(e));
-ui.main.addEventListener('click',     e => click(e));
-
-
-
 function click(e) {
   if(e.target !== e.currentTarget) return;
 }
@@ -58,8 +48,10 @@ function mousemove(e) {
   mousePos.y = e.y;
 
   //console.log('mousemove')
-
-  main.state.mousePos = mousePos;
+  if (main?.state?.mousePos) {
+    main.state.mousePos = mousePos;
+  }
+  
 
   ui.elemToolTip.classList.add('hidden');
 
@@ -95,5 +87,46 @@ function mouseout(e) {
     //window.history.replaceState(null, null, '/');
   }
 }
+
+ui.init = (iGame) => {
+  console.log(iGame);
+
+  headerNav01.addEventListener('click',e=>{
+    console.log('jasonMapData toogle');
+    jasonMapData.classList.toggle('hidden')
+  })
+
+  ui.main.addEventListener('mousemove', e => mousemove(e),);
+  ui.main.addEventListener('mouseout',  e => mouseout(e));
+  ui.main.addEventListener('click',     e => click(e));
+
+  const loader = document.getElementById('loader')
+
+  iGame.states.subscribe('ui-running','running',(newVal,oldVal) => {
+    console.log('ui','running',{newVal,oldVal})
+
+    switch (newVal){
+      case Game.runstate.LOADING:
+        ui.main.style.background = '#333';
+        loader.classList.remove('hidden');
+        break;
+
+     case Game.runstate.RUNNING:
+        ui.main.style.background = 'transparent';
+        loader.classList.add('hidden');
+        break;
+
+      case Game.runstate.PAUSED:
+        ui.main.style.background = 'rgba(0,0,0,0.3)';
+        break;
+    }
+  });
+}
+
+
+
+
+
+
 
 export default ui

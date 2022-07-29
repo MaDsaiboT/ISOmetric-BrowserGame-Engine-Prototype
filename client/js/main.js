@@ -2,16 +2,18 @@
 const tileWidth  = 128;
 const tileHeight = 64;
 
-
+import {Game}     from './GAME/game.js'
 import router     from './UI/router.js';
-import ui         from './UI/ui.js';
+
 import userInput  from './ECS/systems/userInput.js';
 import map        from './map.js';
 import Websocket  from './websocket.js';
 
+import ui         from './UI/ui.js';
+
 import {createUUID, rememberUUID, UUIDs} from './_utils/uuid.js';
 
-import game from './GAME/Game.js';
+
 
 
 let mapData = {};
@@ -34,13 +36,6 @@ var viewPortChanged    = false;
 var viewPortVelocity   = 0;
 var init = true;
 
-const gameStates = {
-  PAUSED:  'paused',
-  LOADING: 'loading',
-  RUNNING: 'running'
-};
-
-
 let paused = false;
 
 let lastTime = 0;
@@ -60,15 +55,14 @@ const ctxMap            = canvasMap.getContext('2d');
 const ctxMapBuffer      = canvasMapBuffer.getContext('2d',{ willReadFrequently: true });
 const ctxInteract       = canvasInteract.getContext('2d');
 
-
-
-
 let width  = canvasMap.width  = canvasInteract.width  = window.innerWidth;
 let height = canvasMap.height = canvasInteract.height = window.innerHeight;
 
 //ctxMap.setTransform(1,0,0,1, w2, 200);
 
 const instanceMap = new map(ctxMap,ctxMapBuffer,tileHeight,tileWidth);
+const iGame       = new Game();
+
 var instanceUserInput = null;
 
 var timeStamp;
@@ -393,9 +387,6 @@ function resizeCanvas() {
   drawViewport(instanceUserInput, false);
 }
 
-
-
-
   //state.console = 'lol';
   //state.console = 'wuhaaa';
 
@@ -415,12 +406,12 @@ function resizeCanvas() {
 
   instanceUserInput = new userInput(); 
 
+  ui.init(iGame,instanceUserInput);
+
   instanceMap.load('map001').then(
     v => {
       drawViewport(instanceUserInput,false);
-      game.state = gameStates.RUNNING;
-      console.log('────── start GameLoop ──────')
-      loop(0);
+      iGame.states.running =  Game.runstate.RUNNING;
     },
     err => {
       console.log(err)
@@ -433,10 +424,11 @@ state.framesSinceStart = 0;
 let x = 0;
 let direction = 1;
 let offset = {x:0,y:0};
+let loopActive = false;
 function loop(_timeStamp) {
   timeStamp = _timeStamp;
   state.framesSinceStart ++;
-
+  loopActive = true;
   const deltaTime = timeStamp - lastTime;
   lastTime = timeStamp;
 
@@ -467,21 +459,25 @@ function loop(_timeStamp) {
     // ui.elemMousePos.textContent  += `| ${pause_counter}`;
   }
  
-  if (state.framesSinceStart % 2 === 0) {
-    if ( direction ) { x+=3 } else { x-=3} 
-    if ( x > 3*tileHeight/2) direction = 0
-    if ( x < 0 ) direction = 1
+  drawViewport(instanceUserInput);
+  drawInteract();
+
+  if (iGame.states.running === Game.runstate.RUNNING) {
+    if (state.framesSinceStart % 2 === 0) {
+      if ( direction ) { x+=3 } else { x-=3} 
+      if ( x > 3*tileHeight/2) direction = 0
+      if ( x < 0 ) direction = 1
+    }
+   
   }
 
-  drawViewport(instanceUserInput);
-
   ctxInteract.clearRect(-width/2,-200,width,height);
-  drawInteract();
 
   offset.x = viewPortOffset.x + x*2
   offset.y = viewPortOffset.y - x
 
   instanceMap.drawCaracter(1,1,0,ctxInteract,offset);
+  
 
   if (timer > nextFrame) {
     timer = 0;
@@ -509,7 +505,12 @@ function loop(_timeStamp) {
     return
   }
 
-  if (game.state === gameStates.RUNNING) window.requestAnimationFrame(loop);
+  if (iGame.states.running != Game.runstate.LOADING) {
+    window.requestAnimationFrame(loop);
+  } else {
+    //state.fps = 0;
+    //state.framesSinceStart = 0;
+  }
 }
 
 async function hash(string) {
@@ -522,18 +523,32 @@ async function hash(string) {
   return hashHex;
 }
 
-const runthis = e => {
-  console.time()
-  hash('supersecret1234').then(
-    hex=>{console.log(hex)}
-  )
 
+iGame.states.subscribe('main-running','running',(newVal,oldVal) => {
+  console.log('main','running',{newVal,oldVal})
+
+  switch (newVal){
+    case Game.runstate.LOADING:
+      console.log('────── loading ──────')
+      break;
+
+    case Game.runstate.RUNNING:
+      console.log('────── running ──────')
+      if (!loopActive) loop(0)
+      break;
+  }
   
+});
+
+
+const runthis = e => {
+
 }
+
 window.setTimeout(runthis,2000);
 
 window.addEventListener('beforeunload', function (e) {
-    e.preventDefault();
-    e.returnValue = '';
+   // e.preventDefault();
+   // e.returnValue = '';
 });
-export {state,drawViewport,screenToMap, instanceMap, instanceUserInput}
+export {state, drawViewport,screenToMap, iGame, instanceMap, instanceUserInput}
