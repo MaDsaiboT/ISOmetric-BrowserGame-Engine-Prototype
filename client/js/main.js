@@ -17,6 +17,7 @@ import math from './_utils/math.js' // import our niftly litlle math libary
 import {createUUID, rememberUUID, UUIDs} from './_utils/uuid.js';
 
 
+import DisplayDirectionalKeys from './UI/webComponents/displayDirectionalKeys.js';
 
 let mapData = {};
 let mousePos = {
@@ -501,6 +502,14 @@ function loop(_timeStamp) {
     ui.mainMenu.classList.remove('hidden');
     return
   }
+
+  const displayDirectionalKeys = document.querySelector('display-directional-keys');
+  displayDirectionalKeys.active = {
+       up:instanceUserInput.arrowUp,
+     down:instanceUserInput.arrowDown,
+     left:instanceUserInput.arrowLeft,
+    right:instanceUserInput.arrowRight
+    };
 
   if (iGame.states.running != Game.runstate.LOADING) {
     window.requestAnimationFrame(loop);
