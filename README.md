@@ -12,5 +12,5 @@ Without the need for Frameworks/Libaries like Angular or React
 
 ![animation2](https://github.com/MaDsaiboT/ISOmetric-BrowserGame-Engine-Prototype/blob/master/__ScreenShots/Animation2.gif)
 
-## latest feature: arrow key indikator
+## latest feature: arrow-key-indicator
 <img src="./__ScreenShots/Animation4.gif" width="268" />
