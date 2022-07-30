@@ -24,12 +24,12 @@
           </nav>
         </header>
         <main class="">
-          <svg id="loader" class="loader" width="156" height="156" viewBox="0 0 50 50">
+          <svg id="loader" width="120px" height="120px" viewBox="0 0 41 41">
             <polygon 
               stroke-width="1"
               stroke="#fff"
               fill="none"
-              points="20,1 40,40 1,40"
+              points="18,1 22,1 40,37 37,40 3,40 1,37"
             />
           </svg> 
           <div id="toolTip" class="hidden">tooltip</div>
@@ -38,10 +38,12 @@
             <p> hit <kbk>p</kbk> to continue</p>
           </div>
           <div id="jasonMapData" class="hidden"></div>
-          <section id="contentWraper" class="hidden">
+          <section id="contentWraper" class="">
             <span id="contentClose">X</span>
             <div id="content"></div>
           </section>
+          <progress-bar percent="0"></progress-bar>
+          <display-directional-keys></display-directional-keys>
         </main>
         <footer>
           <statusbar>
@@ -56,17 +58,6 @@
     <img src="img/tiles/tile128X128.png" id="tile128X128" class="hidden">
     <script type="module" src="js/main.js" defer></script>
   </body>
-  <template id="loader">
-    <svg width="200" height="250" viewBox="0 0 50 50">
-      <polygon 
-        stroke-width="1"
-        stroke="#fff"
-        fill="none"
-        points="20,1 40,40 1,40"
-      />
-      <text fill="#fff" x="6" y="50">Loading</text>
-    </svg> 
-  </template>
 </html>
 
 
