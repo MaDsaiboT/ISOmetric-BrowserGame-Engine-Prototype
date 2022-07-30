@@ -153,6 +153,7 @@ document.body.addEventListener("click",e => {
   }
 });
 
+
 const loader = document.getElementById('loader')
 const htmlChache = new Map();
 
@@ -201,13 +202,13 @@ const formHandler = (form) => {
 let isActiveContentModal = false;
 const showContentModal = () => {
   if (isActiveContentModal) return;
-  contentWraper.classList.replace('hidden','active')
+  contentWraper.classList.add('active')
   isActiveContentModal = true;
 }
 
 const hideContentModal = () => {
   if (!isActiveContentModal) return;
-  contentWraper.classList.replace('active','hidden')
+  contentWraper.classList.remove('active')
   isActiveContentModal = false;
 }
 

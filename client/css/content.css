@@ -1,15 +1,16 @@
 
 #contentWraper{
-  display: none;
-}
-
-#contentWraper.active {
+  transition: margin-top 0.5s ease;
+  margin-top: 2vh;
+  display: flex !important; 
+  isolation: isolate;
   max-width: 700px;
   min-width: 500px;
   padding: 1px;
   position: relative;
   min-height: 500px;
   margin: 15vh auto;
+  margin-top: -150vh;
   z-index: 2;
   overflow: hidden;
   border-radius: 15px;
@@ -18,35 +19,18 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  animation: fallIn 0.5s;
-  animation-timing-function: ease;
 }
 
-@keyframes fallIn {
-  from {margin-top: -150vh;}
-  to   {margin-top:   15vh;}
+#contentWraper.active {
+  margin: 15vh auto;
 }
 
-@keyframes fallOut {
-  from {margin-top:   15vh;}
-  to   {margin-top: -150vh;}
-}
-
-#contentWraper.hidden {
-  margin-top: -150vh;
-  display: flex;
-  animation: fallOut 0.5s;
-}
 
 #content {
   flex-grow: 1;
   user-select: none;
   padding: 15px;
   color: var(--text-highlighted);
-}
-
-#contentWraper.hidden *{
-  display: none;
 }
 
 #contentWraper.active #contentClose{
