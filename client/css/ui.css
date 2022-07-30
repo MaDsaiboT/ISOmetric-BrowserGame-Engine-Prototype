@@ -72,6 +72,7 @@
 #ui main {
   flex-grow: 1;
   background: #333;
+  transition: background 2s ease;
 }
 
 #ui main #toolTip{

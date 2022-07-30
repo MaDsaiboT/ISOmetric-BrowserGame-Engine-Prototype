@@ -63,7 +63,7 @@ const states = new Proxy({
       } 
       target[property] = newVal;
       const observers = target._observers.filter(o => o.property === property);
-      console.log(target._observers)
+      //console.log(target._observers)
       for (let observer of observers) observer.callback(newVal, oldVal);
       return true
     }
@@ -78,10 +78,15 @@ export class Game {
   constructor(){
     this.states = states;
     
-    this.pauseKey = 'KeyP';
+    this.keyPause = 'KeyP';
+    this.keyLoad  = 'KeyL';
 
     window.addEventListener( 'keydown',  e => {
-      if (e.code === this.pauseKey) this.pause()
+      switch (e.code) {
+        case this.keyPause: this.pause(); break;
+        case this.keyLoad:  this.load(); break;
+      }
+  
     });
   }
 
@@ -93,7 +98,13 @@ export class Game {
     }
   }
   
-
+  load() {
+    switch (this.states.running){
+      case runstate.LOADING: this.states.running = runstate.RUNNING; break;
+      case runstate.PAUSED:  this.states.running = runstate.LOADING; break;
+      case runstate.RUNNING: this.states.running = runstate.LOADING; break;
+    }
+  }
   
 }
 

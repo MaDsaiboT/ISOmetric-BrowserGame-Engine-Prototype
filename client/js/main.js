@@ -505,7 +505,7 @@ function loop(_timeStamp) {
   if (iGame.states.running != Game.runstate.LOADING) {
     window.requestAnimationFrame(loop);
   } else {
-    //state.fps = 0;
+    loopActive = false;
     iGame.states.framesSinceStart = 0;
     iGame.states.fps = 0;
   }

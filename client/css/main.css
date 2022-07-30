@@ -241,7 +241,7 @@ kbk {
     outline: none;
   }
 
-.loader{
+#loader{
     z-index: 99;
     position: absolute;
     top: 50%;
