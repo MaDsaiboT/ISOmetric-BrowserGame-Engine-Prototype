@@ -11,8 +11,10 @@ import Websocket  from './websocket.js';
 
 import ui         from './UI/ui.js';
 
-import {createUUID, rememberUUID, UUIDs} from './_utils/uuid.js';
+import math from './_utils/math.js' // import our niftly litlle math libary 
 
+
+import {createUUID, rememberUUID, UUIDs} from './_utils/uuid.js';
 
 
 
