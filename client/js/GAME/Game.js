@@ -22,6 +22,7 @@ const runstate = {
 
 const states = new Proxy({
     fps: 0,
+    framesSinceStart: 0,
     running: runstate.LOADING,
 
     _observers: [],

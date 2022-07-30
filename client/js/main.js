@@ -76,11 +76,7 @@ const render = property => {
     return false;
   }; 
 
-
   switch (property) {
-    case 'framesSinceStart':
-      elem.textContent = state.framesSinceStart;
-      break;
 
     case 'mousePos':
       if (state.mousePos.x == -1 || state.mousePos.y == -1)
@@ -144,7 +140,6 @@ const setState = state => {
 const state = setState({
   fps : 0,
   mousePos : {x:0,y:0},
-  framesSinceStart : 0,
   console: ''
 });
 
@@ -206,7 +201,7 @@ function drawViewport(instanceUserInput,compare = true) {
 
   if (instanceUserInput.arrowKeysActive()) {
     if ( viewPortVelocity <= 3)      viewPortVelocity  = 3;
-    if ( state.framesSinceStart % 15 === 0) viewPortVelocity += 1;
+    if ( iGame.states.framesSinceStart % 15 === 0) viewPortVelocity += 1;
     if ( viewPortVelocity >= 15)     viewPortVelocity  = 13;
 
     if (  instanceUserInput.arrowRight 
@@ -422,14 +417,14 @@ function resizeCanvas() {
 
 
 
-state.framesSinceStart = 0;
+iGame.states.framesSinceStart = 0;
 let x = 0;
 let direction = 1;
 let offset = {x:0,y:0};
 let loopActive = false;
 function loop(_timeStamp) {
   timeStamp = _timeStamp;
-  state.framesSinceStart ++;
+  iGame.states.framesSinceStart ++;
   loopActive = true;
   const deltaTime = timeStamp - lastTime;
   lastTime = timeStamp;
@@ -465,7 +460,7 @@ function loop(_timeStamp) {
   drawInteract();
 
   if (iGame.states.running === Game.runstate.RUNNING) {
-    if (state.framesSinceStart % 2 === 0) {
+    if (iGame.states.framesSinceStart % 2 === 0) {
       if ( direction ) { x+=3 } else { x-=3} 
       if ( x > 3*tileHeight/2) direction = 0
       if ( x < 0 ) direction = 1
@@ -511,7 +506,8 @@ function loop(_timeStamp) {
     window.requestAnimationFrame(loop);
   } else {
     //state.fps = 0;
-    //state.framesSinceStart = 0;
+    iGame.states.framesSinceStart = 0;
+    iGame.states.fps = 0;
   }
 }
 

@@ -121,6 +121,21 @@ ui.init = (iGame) => {
         break;
     }
   });
+
+  iGame.states.subscribe(
+    'ui-framesSinceStart',
+    'framesSinceStart',
+    (newVal) => {
+      const property = 'framesSinceStart';
+      //console.log(property,newVal);
+      const elem = document.querySelector(`[data-binding="${property}"]`);
+      if (!elem) {
+        console.log('could not find element for '+property)
+        return false;
+      }; 
+      elem.textContent = newVal;
+    }
+  )
 }
 
 
