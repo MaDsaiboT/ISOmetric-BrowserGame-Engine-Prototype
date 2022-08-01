@@ -7,8 +7,6 @@
   src: url(fonts/BigShouldersDisplay-Regular.ttf);
 }
 
-
-
 html,body,#ui{
   margin: 0;
   padding: 0;
@@ -84,14 +82,11 @@ ruler{
   top: 40px;
   left: 0px;
   z-index: 4;
-
   background: rgba(20,20,20,0.8);
-
   border-top-right-radius: 120px;
   border-bottom-right-radius: 120px;
   backdrop-filter: blur(50px) grayscale(0.9);
   user-select: none;
-
 }
 
 #viewPortIndicator{
@@ -112,12 +107,9 @@ ruler{
   z-index: 2;
 }
 
-
-
 .hidden {
   display: none !important;
 }
-
 
 #console div {
   height: 200px;
@@ -126,8 +118,6 @@ ruler{
   vertical-align: top;
   overflow-y: scroll;
 }
-
-
 
 kbk {
   text-transform: uppercase;
@@ -187,75 +177,76 @@ kbk {
   background: #555;
 }
 
+form {
+  margin: 50px auto;
+  height: 100%;
+  max-width: 500px;
+  padding: 0;
+  display: grid;
+  grid: auto / 1fr 1fr;
+  column-gap: 5rem;
+  row-gap: 5px;
+  white-space: nowrap;
+}
 
- form {
-    margin: 50px auto;
-    height: 100%;
-    max-width: 500px;
-    padding: 0;
-    display: grid;
-    grid: auto / 1fr 1fr;
-    column-gap: 5rem;
-    row-gap: 5px;
-    white-space: nowrap;
-  }
+form label,
+form span {
+  margin-top: 10px;
+}
 
-  form label,
-  form span {
-    margin-top: 10px;
-  }
+form label{
+  letter-spacing: 2px;
+}
 
-  form label{
-    letter-spacing: 2px;
-  }
+form input {
+  grid-column: span 2;
+  background: #222;
+  box-shadow: 0 0 1px 1px #333;
+  border:none;
+  padding: .2em .7em;
+  font-size: 1.5em;
+  border-radius: .2em;
+  color: var(--text-highlighted);
+}
 
-  form input {
-    grid-column: span 2;
-    background: #222;
-    box-shadow: 0 0 1px 1px #333;
-    border:none;
-    padding: .2em .7em;
-    font-size: 1.5em;
-    border-radius: .2em;
-    color: var(--text-highlighted);
-  }
+form button {
+  color: #bbb;
+  font-weight: bolder;
+  margin-top: 1em;
+  grid-column: span 2;
+  padding: .2em;
+  font-size: 1.8em;
+  border-radius: .2em;
+  border:none;
+  box-shadow: 0 0 1px 1px #333;
+  background-color: #444;
+}
 
-  form button {
-    color: #bbb;
-    font-weight: bolder;
-    margin-top: 1em;
-    grid-column: span 2;
-    padding: .2em;
-    font-size: 1.8em;
-    border-radius: .2em;
-    border:none;
-    box-shadow: 0 0 1px 1px #333;
-    background-color: #444;
-  }
+form button:hover{
+  background-color: darkgreen;
+}
 
-  form button:hover{
-    background-color: darkgreen;
-  }
-
-  form input:focus {
-    outline: none;
-  }
+form input:focus {
+  outline: none;
+}
 
 #loader{
-    z-index: 99;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px; height: 250px;
-    display: block;
+  z-index: 99;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; height: 250px;
+  display: block;
+}
 
-    stroke-dasharray: 22;
-    stroke-dashoffset: 1;
-    animation: dash 4s cubic-bezier(0.455, 0.03, 0.515, 0.955) 
-      infinite alternate-reverse;
-  }
+#loader polygon.animated{
+  stroke-dasharray: 22;
+  stroke-dashoffset: 1;
+  animation: dash 4s cubic-bezier(0.455, 0.03, 0.515, 0.955) 
+    infinite alternate-reverse;
+}
 
-  @keyframes dash{
-    to {stroke-dashoffset: 250;}
-  }
+@keyframes dash{
+  to {stroke-dashoffset: 250;}
+}
