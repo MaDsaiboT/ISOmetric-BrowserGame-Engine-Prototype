@@ -68,12 +68,17 @@
   border-bottom: 3px solid rgba(30,30,30,0.9);
 }
 
-
 #ui main {
   flex-grow: 1;
   background: #333;
   transition: background 2s ease;
 }
+
+#ui main.paused{
+  background: rgba(40,40,40,0.7);
+  backdrop-filter: blur(2px) grayscale(0.4);
+}
+
 
 #ui main #toolTip{
   font-size: 0.6em;
@@ -88,6 +93,7 @@
   left: 0;
   user-select: none;
 }
+
 
 
 #ui div.menu{
@@ -131,10 +137,7 @@
 }
 
 
-#ui main.paused{
-  background: rgba(40,40,40,0.7);
-  backdrop-filter: blur(2px) grayscale(0.4);
-}
+
 
 #ui footer {
 
