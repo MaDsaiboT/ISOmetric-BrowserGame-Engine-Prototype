@@ -8,7 +8,7 @@ export default class componentSettings extends HTMLElement {
   async connectedCallback() {
     const shadowRoot = this.shadowRoot || this.attachShadow({mode:"open"})
     //console.log('componentSettings','connected')
-    const src = `${location.origin}/js/UI/webComponents/settings/settings.html`;
+    const src = `${location.origin}/html/webComponents/settings.html`;
     shadowRoot.innerHTML = await (await fetch(src)).text()
 
     const form = shadowRoot.querySelector('form');

@@ -318,7 +318,7 @@ router.addObserver({
 router.addObserver({
   name: 'settings', 
   callback: (params,cur,last) => {
-    import('./webComponents/settings/settings.js')
+    import('./webComponents/settings.js')
     .then( content.innerHTML = '<component-settings>')
     .then( showContentModal())
   }
