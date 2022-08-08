@@ -3,7 +3,12 @@ import * as utils_math  from './_utils/math.js';
 
 class map {
 
+  static instance = null;
+
   constructor (ctxMap, ctxMapBuffer, tileHeight, tileWidth, name = 'map001') {
+
+    if (map.instance !== null) return map.instance; 
+
     this.ctxMap       = ctxMap;
     this.ctxMapBuffer = ctxMapBuffer;
     this.tileHeight   = tileHeight;
@@ -15,6 +20,7 @@ class map {
 
     this.drawRuler = false;
 
+    map.instance = this;
     //console.log(ctxMapBuffer.canvas.height);
   }
 

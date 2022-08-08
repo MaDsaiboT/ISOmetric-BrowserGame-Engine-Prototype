@@ -3,8 +3,14 @@ import * as ui    from '../../UI/ui.js';
 
 class userInput {
 
+  static instance = null;
+
   constructor() {
     //Keyboard State Data
+
+    if (userInput.instance instanceof userInput) {
+      return userInput.instance;
+    } 
 
     this.keyState     = []; //Keep track of the key state
     this.keyCount     = 0;
@@ -22,6 +28,9 @@ class userInput {
     this.viewPortChanged      = false;
 
     this.bindEvents();
+
+  
+    userInput.instance = this;
   }
 
   bindEvents(){
