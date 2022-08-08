@@ -212,13 +212,35 @@ const hideContentModal = () => {
   isActiveContentModal = false;
 }
 
-
 const navUserActions = document.getElementById('userActions');
 const content        = document.getElementById('content');
 const contentClose   = document.getElementById('contentClose');
 const contentWraper  = document.getElementById('contentWraper');
-  
-await loadHTML(navUserActions,'loggedOut.html');
+
+const login = async name => {
+  const userName = name.trim().slice(0, 20); 
+  router.loggedIn = true;
+  localStorage.setItem('userName', userName);
+  navUserActions?.classList?.add('loggedIn');
+  await loadHTML(navUserActions,'loggedIn.html');
+  hideContentModal();
+
+  //give the browser a chance to catch up the dom
+  window.setTimeout(async ()=>{
+    //update proflile link
+    document.querySelector('[href="/profile"]').href += `/${userName}`;
+    document.querySelector('.avatar')
+      .setAttribute('data-label',userName.substr(0, 2).toUpperCase());
+  },500);
+}
+
+if (localStorage.userName) {
+  login(localStorage.userName)
+} else {
+  await loadHTML(navUserActions,'loggedOut.html');
+  ['logIn.html','signUp.html'].forEach(file=>loadHTML(null,file,true))
+}
+
 //loadHTML(navUserActions,'loggedIn.html');
 //navUserActions.classList.add('loggedIn');
 
@@ -239,20 +261,7 @@ router.addObserver({
       showContentModal();
     }
 
-
-    if ( params?.name?.length > 2 ) {
-      const userName = params.name.trim().slice(0, 20); 
-      router.loggedIn = true;
-      navUserActions?.classList?.add('loggedIn');
-      await loadHTML(navUserActions,'loggedIn.html');
-      hideContentModal();
-
-      //give the browser a chance to catch up the dom
-      window.setTimeout(async ()=>{
-        //update the proflile link
-        document.querySelector('[href="/profile"]').href += `/${userName}`;
-      },500);
-    }
+    if ( params?.name?.length > 2 ) login(params.name)
 
   }
 });
