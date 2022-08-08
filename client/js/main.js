@@ -6,6 +6,9 @@ import {Game}     from './GAME/game.js'
 import router     from './UI/router.js';
 
 import userInput  from './ECS/systems/userInput.js';
+
+import {ecs} from './ECS/ecs.js';
+
 import map        from './map.js';
 import Websocket  from './websocket.js';
 
@@ -19,6 +22,7 @@ import * as utils from './_utils/utils.js' // import our niftly litlle math liba
 import {createUUID, rememberUUID, UUIDs} from './_utils/uuid.js';
 
 
+//import ProgressBar            from './UI/webComponents/progressbar.js';
 import DisplayDirectionalKeys from './UI/webComponents/displayDirectionalKeys.js';
 
 let mapData = {};
@@ -90,9 +94,6 @@ const render = property => {
       }
       break;
 
-    case 'fps':
-      elem.textContent = `fps:${state.fps.toString().padStart(3,'0')}`;
-      break
 
     case 'console':
       if (elem.textContent) {
@@ -142,7 +143,6 @@ const setState = state => {
 }
 
 const state = setState({
-  fps : 0,
   mousePos : {x:0,y:0},
   console: ''
 });
@@ -205,45 +205,27 @@ function drawViewport(iUserInput,compare = true) {
   let bh = ctxMapBuffer.canvas.height;
 
   if (iUserInput.arrowKeysActive()) {
-    if ( viewPortVelocity <= 3)      viewPortVelocity  = 3;
     if ( iGame.states.framesSinceStart % 15 === 0) viewPortVelocity += 1;
-    if ( viewPortVelocity >= 15)     viewPortVelocity  = 13;
+    viewPortVelocity = math.clamp(viewPortVelocity,3,13);
 
-    if (  instanceUserInput.arrowRight 
-      && !instanceUserInput.arrowLeft 
-      &&  viewPortOffset.x < (bw/2 - w/2)
-    ) {
+    if (iUserInput.arrowRight && !iUserInput.arrowLeft ) {
       viewPortOffset.x += viewPortVelocity;
-      if (viewPortOffset.x >= (bw/2 - w/2)) 
-        viewPortOffset.x = (bw/2 - w/2);
     }
 
-    if (  instanceUserInput.arrowLeft
-      && !instanceUserInput.arrowRight
-      &&  viewPortOffset.x > -(bw/2 - w/2)
-    ) {
+    if (iUserInput.arrowLeft && !iUserInput.arrowRight) {
       viewPortOffset.x -= viewPortVelocity;
-      if (viewPortOffset.x <= -(bw/2 - w/2)) 
-        viewPortOffset.x = -(bw/2 - w/2);
     }
 
-    if (  instanceUserInput.arrowDown
-      && !instanceUserInput.arrowUp
-      &&  viewPortOffset.y < (bh - h)
-    ) {
+    if (iUserInput.arrowDown && !iUserInput.arrowUp) {
       viewPortOffset.y += viewPortVelocity;
-      if (viewPortOffset.y >= (bh - h)) 
-        viewPortOffset.y = (bh - h);
     }
 
-    if (  instanceUserInput.arrowUp 
-      && !instanceUserInput.arrowDown
-      &&  viewPortOffset.y > 0
-    ) {
+    if (iUserInput.arrowUp && !iUserInput.arrowDown) {
       viewPortOffset.y -= viewPortVelocity;
-      if (viewPortOffset.y <= 0) 
-        viewPortOffset.y = 0;
     }
+
+    viewPortOffset.x = math.clamp(viewPortOffset.x,-(bw*0.5 - w*.5),(bw*0.5 - w*0.5));
+    viewPortOffset.y = math.clamp(viewPortOffset.y,0,(bh - h));
 
     viewPortOffset.x = Math.floor(viewPortOffset.x);
     viewPortOffset.y = Math.floor(viewPortOffset.y);
@@ -275,7 +257,6 @@ function drawViewport(iUserInput,compare = true) {
     0,0,w,h
   );
 
-
   viewPortIndicator.style.left = drawX +'px';
   viewPortIndicator.style.top  = viewPortOffset.y +'px';
   
@@ -284,15 +265,6 @@ function drawViewport(iUserInput,compare = true) {
 
   ctx.restore()
 
-  /*
-  console.log(
-    'render viewPort',
-    compare,
-    (viewPortOffset.x == viewPortOffsetLast.x && viewPortOffset.y == viewPortOffsetLast.y),
-    viewPortOffset,
-    viewPortOffsetLast
-  );
-  */
 }
 
 function screenToMap(x, y) {
@@ -338,7 +310,9 @@ function drawTile(x,y,layer,color,context = ctxMap) {
 
   //console.log('drawTile',x,y,color);
 
-  context.fillStyle = 'rgba(90,250,99,0.7)';
+  color = color || 'rgba(90,250,99,0.5)'
+
+  context.fillStyle = color;
 
   context.translate(
     ((x - y) * tileWidth  / 2 ) - (viewPortOffset.x),
@@ -364,12 +338,11 @@ function drawTile(x,y,layer,color,context = ctxMap) {
   context.closePath();
   //context.fillStyle = 'rgba(90,200,99,0.1)';
   //context.stroke();
-  context.fillStyle = 'rgba(90,250,99,0.5)';
+
   context.fill();
 
   context.restore();
 }
-
 
 function resizeCanvas() {
   width  = canvasMap.width  = canvasInteract.width  = window.innerWidth;
@@ -389,37 +362,104 @@ function resizeCanvas() {
   drawViewport(iUserInput, false);
 }
 
-  //state.console = 'lol';
-  //state.console = 'wuhaaa';
+viewPortIndicator.style.width  = window.innerWidth + 'px';
+viewPortIndicator.style.height = window.innerHeight + 'px';
 
-  viewPortIndicator.style.width  = window.innerWidth + 'px';
-  viewPortIndicator.style.height = window.innerHeight + 'px';
+ctxMapBuffer.transform(1,0,0,1,ctxMapBuffer.canvas.width/2,200);
+ctxInteract.translate(width / 2, 200);
 
-  ctxMapBuffer.transform(1,0,0,1,ctxMapBuffer.canvas.width/2,200);
-
-  ctxInteract.translate(width / 2, 200);
+window.addEventListener('resize',() => resizeCanvas());
 
 
+//uiMain.addEventListener();
 
-  window.addEventListener('resize',() => resizeCanvas());
+iUserInput = new userInput(); 
+
+ui.init(iGame,iUserInput);
+
+iMap.load('map001').then(
+   async v => {
+    await ecs.systemAdd('walkPaths',200, true);
+    await ecs.systemAdd('movement', 400, true);
+    await ecs.systemAdd('drawCubes',500, true);
+
+    await ecs.sortSystems();
+
+    drawCubes = ecs.systemGet('drawCubes')
+    movement  = ecs.systemGet('movement')
+   
+
+    drawViewport(iUserInput,false);
+
+    iGame.states.running =  Game.runstate.RUNNING;
+  },
+  err => {
+    console.log(err)
+  }
+);
 
 
-  //uiMain.addEventListener();
+const path = [];
+path.push({x:2,y:4});
+path.push({x:2,y:3});
+path.push({x:2,y:2});
+path.push({x:2,y:1});
+path.push({x:3,y:1});
+path.push({x:3,y:2});
+path.push({x:3,y:3});
+path.push({x:4,y:3});
+path.push({x:5,y:3});
+path.push({x:5,y:4});
+path.push({x:4,y:4});
+path.push({x:3,y:4});
 
-  instanceUserInput = new userInput(); 
+function* gen(path) {
+  let i = -1;
+  while (true) {
+    i++
+    if (i >= path.length) i=0;
+    yield path[i];
+  }
+}
 
-  ui.init(iGame,instanceUserInput);
+const pathIterator = gen(path);
 
-  instanceMap.load('map001').then(
-    v => {
-      drawViewport(instanceUserInput,false);
-      iGame.states.running =  Game.runstate.RUNNING;
-    },
-    err => {
-      console.log(err)
-    }
-  );
+const cube = {}
+cube.hue = 60;
+cube.position = {x:2,y:4,layer:0};
+cube.path = path;
+cube.targetPos = pathIterator.next().value;
+cube.facing = {x: 1, y:1};
 
+const easeTo = (position,target, ease=0.05) => {
+  const dx = target.x - position.x;
+  const dy = target.y - position.y;
+  position.x += dx * ease;
+  position.y += dy * ease;
+  if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
+    position.x = target.x;
+    position.y = target.y;
+  }
+  return position;
+}
+
+const getFacingAlias = (facing) => {
+  if(facing.x ==  1 && facing.y ==  0) return 'north'
+  if(facing.x ==  1 && facing.y ==  1) return 'northeast'
+  if(facing.x ==  1 && facing.y == -1) return 'northwest'
+
+  if(facing.x ==  0 && facing.y ==  1) return 'east' 
+  if(facing.x ==  0 && facing.y == -1) return 'west'
+
+  if(facing.x == -1 && facing.y ==  0) return 'south' 
+  if(facing.x == -1 && facing.y ==  1) return 'southeast'
+  if(facing.x == -1 && facing.y == -1) return 'northwest'
+
+  return null;
+}
+
+let movement  = null;
+let drawCubes = null;
 
 
 iGame.states.framesSinceStart = 0;
@@ -427,6 +467,9 @@ let x = 0;
 let direction = 1;
 let offset = {x:0,y:0};
 let loopActive = false;
+
+let t = 0;
+let facing = {x:0,y:0}
 function loop(_timeStamp) {
   timeStamp = _timeStamp;
   iGame.states.framesSinceStart ++;
@@ -448,13 +491,13 @@ function loop(_timeStamp) {
   //const x = (mousePos.x|0).toString(10).padStart(5, "0");
   //const y = (mousePos.y|0).toString(10).padStart(5, "0");
 
-  //ui.elemMousePos.textContent  = '';
+  ui.elemMousePos.textContent  = '';
 
   if (viewPortChanged || iUserInput.arrowKeysActive()) {
-   // ui.elemMousePos.textContent  += ` Viewport `;
-   // ui.elemMousePos.textContent  += ` x:${viewPortOffset.x}`;
-   // ui.elemMousePos.textContent  += ` y:${viewPortOffset.y}`;
-   // ui.elemMousePos.textContent  += ` velocity:${viewPortVelocity}`;
+    ui.elemMousePos.textContent  += ` Viewport `;
+    ui.elemMousePos.textContent  += ` x:${viewPortOffset.x}`;
+    ui.elemMousePos.textContent  += ` y:${viewPortOffset.y}`;
+    ui.elemMousePos.textContent  += ` velocity:${viewPortVelocity}`;
   }
 
   //ui.elemMousePos.textContent  += `${state.framesSinceStart.toString(2).padStart(32,'0')}`;
@@ -462,24 +505,60 @@ function loop(_timeStamp) {
     // ui.elemMousePos.textContent  += `| ${pause_counter}`;
   }
  
-  drawViewport(instanceUserInput);
+  drawViewport(iUserInput);
+  ctxInteract.clearRect(-width/2,-200,width,height);
   drawInteract();
 
+  ecs.runSystems(timeStamp);
+  
+  const targetPos = cube.targetPos;
+
   if (iGame.states.running === Game.runstate.RUNNING) {
-    if (iGame.states.framesSinceStart % 2 === 0) {
-      if ( direction ) { x+=3 } else { x-=3} 
-      if ( x > 3*tileHeight/2) direction = 0
-      if ( x < 0 ) direction = 1
+     
+    if (  cube.position.x == cube.targetPos.x 
+      &&  cube.position.y == cube.targetPos.y
+    ) {
+
+      cube.targetPos = pathIterator.next().value;
+     
+
+      // if (cube.target < cube.path.length -1) {
+      //   cube.target ++;
+      //   //console.log(cube.target,cube.path[cube.target])
+      // } else {
+      //   cube.target = 0;
+      // }
+      
+    } 
+    else {
+      facing.x = math.clamp(Math.round(cube.position.x-cube.targetPos.x),-1,1)
+      facing.y = math.clamp(Math.round(cube.position.y-cube.targetPos.y),-1,1)
+      facing.alias = getFacingAlias(facing);
+
+      if (  
+        getFacingAlias(facing) != null &&
+        getFacingAlias(cube.facing) != getFacingAlias(facing)
+      ) {
+        cube.facing.x = facing.x;
+        cube.facing.y = facing.y;
+        cube.facing.alias = getFacingAlias(cube.facing);
+        //console.log(cube.facing.alias)
+      }
+
+      cube.position = easeTo(cube.position, cube.targetPos)
     }
-   
   }
 
-  ctxInteract.clearRect(-width/2,-200,width,height);
+  //console.log(cube.position)
 
-  offset.x = viewPortOffset.x + x*2
-  offset.y = viewPortOffset.y - x
+  drawTile(targetPos.x,targetPos.y,0,'rgba(90,20,20,0.2)',ctxInteract);
 
-  instanceMap.drawCaracter(1,1,0,ctxInteract,offset);
+  iMap.drawCaracter(
+    cube.position,
+    cube.hue,
+    ctxInteract,
+    viewPortOffset
+  );
   
 
   if (timer > nextFrame) {
@@ -508,13 +587,15 @@ function loop(_timeStamp) {
     return
   }
 
+ 
+
   const displayDirectionalKeys = document.querySelector('display-directional-keys');
   displayDirectionalKeys.active = {
-       up:instanceUserInput.arrowUp,
-     down:instanceUserInput.arrowDown,
-     left:instanceUserInput.arrowLeft,
-    right:instanceUserInput.arrowRight
-    };
+       up:iUserInput.arrowUp,
+     down:iUserInput.arrowDown,
+     left:iUserInput.arrowLeft,
+    right:iUserInput.arrowRight
+  };
 
   if (iGame.states.running != Game.runstate.LOADING) {
     window.requestAnimationFrame(loop);
@@ -525,19 +606,24 @@ function loop(_timeStamp) {
   }
 }
 
-async function hash(string) {
-  const utf8 = new TextEncoder().encode(string);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray
-    .map((bytes) => bytes.toString(16).padStart(2, '0'))
+
+//@log('hash')
+const hash = async string => {
+  const utf8        = new TextEncoder().encode(string);
+  const hashBuffer  = await crypto.subtle.digest('SHA-256', utf8);
+  const hashArray   = Array.from(new Uint8Array(hashBuffer));
+  const hashHex     = hashArray
+    .map(bytes => bytes.toString(16).padStart(2, '0'))
     .join('');
   return hashHex;
 }
 
+//const loggedHash = log(hash);
 
-iGame.states.subscribe('main-running','running',(newVal,oldVal) => {
-  console.log('main','running',{newVal,oldVal})
+//const h = loggedHash();
+
+iGame.states.subscribe('main-running','running', (newVal, oldVal) => {
+  //console.log('main','running',{newVal,oldVal})
 
   switch (newVal) {
     case Game.runstate.LOADING:
@@ -557,11 +643,32 @@ iGame.states.subscribe('main-running','running',(newVal,oldVal) => {
 });
 
 
-const runthis = e => {
+const runthis = async e => {
+
+
+  const ent1 = ecs.entityCreate(`cube-002`,true,['position']);
+
+  ent1.position.x = 1;
+  ent1.position.y = 1;
+  ent1.componentAdd('targetPos', ecs.components.get('targetPos'));
+  ent1.targetPos.x = 1;
+  ent1.targetPos.y = 3;
+
+  ent1.tags.add('moving');
+
+ 
+  const ent2 = ecs.entityCreate(`cube-002`,true,['position']);
+  ent2.position.x = 5;
+  ent2.position.y = 6;
+  ent2.componentAdd('targetPos', ecs.components.get('targetPos'));
+  ent2.targetPos.x = 3;
+  ent2.targetPos.y = 6;
+
+  ent2.tags.add('moving');
 
 }
 
-window.setTimeout(runthis,2000);
+window.setTimeout(runthis,5000);
 
 window.addEventListener('beforeunload', function (e) {
    // e.preventDefault();
