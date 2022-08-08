@@ -22,7 +22,31 @@
   display: flex;
   justify-content: space-between;
   flex-direction: row;
+  height: 22px;
+  margin-top: 0;
+  transition: 
+    margin-top 1s cubic-bezier(0.71,-0.02, 0.41, 0.41);
+  overflow: visible;
 }
+
+#ui.loading header{
+  margin-top: -22px;
+}
+
+#ui header #userActions {
+  opacity: 1;
+  transition: opacity 1s cubic-bezier(0.71,-0.02, 0.41, 0.41);
+}
+
+#ui.loading header #userActions,
+#ui.loading header #userActions * {
+  opacity: 0;
+  transition: opacity 1s cubic-bezier(0.71,-0.02, 0.41, 0.41);
+  cursor: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
 
 #ui nav{
   white-space: nowrap;
@@ -33,8 +57,9 @@
   padding-left: 50px;
 }
 
-#ui nav a,
-#ui nav a:visited {
+#ui nav a:visited,
+#ui nav a:active,
+#ui nav a{
   color: #555;
   text-decoration: none;
 }
@@ -54,7 +79,6 @@
   margin-bottom: -3px;
   transition:
     background       .7s,
-    color            .8s,
     letter-spacing    1s,
     border-bottom    .7s;
 }
@@ -66,6 +90,11 @@
   background: rgba(40,40,40,0.7);
   text-decoration: none;
   border-bottom: 3px solid rgba(30,30,30,0.9);
+  transition: 
+    color            .8s,
+    background       .7s,
+    letter-spacing    1s,
+    border-bottom    .7s;
 }
 
 #ui main {
@@ -79,7 +108,6 @@
   backdrop-filter: blur(2px) grayscale(0.4);
 }
 
-
 #ui main #toolTip{
   font-size: 0.6em;
   color: limegreen;
@@ -88,13 +116,13 @@
   position: absolute;
   border-radius: 2px;
   padding: 5px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 
+    0 4px  8px 0 rgba(0, 0, 0, 0.2 ),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
   top: 0;
   left: 0;
   user-select: none;
 }
-
-
 
 #ui div.menu{
   color:  #999;
@@ -125,7 +153,6 @@
   backdrop-filter: blur(2px) grayscale(0.4);
   min-width:  500px;
  
-
   position: absolute;
   border-top-right-radius: 15px;
   bottom: 0px;
@@ -133,14 +160,9 @@
   padding: 10px;
   color:  whitesmoke;
   font-family: monospace;
-
 }
 
-
-
-
 #ui footer {
-
   white-space: nowrap;
 
   background: rgba(30,30,30,0.6);
@@ -156,10 +178,14 @@
   justify-items: space-between;
   align-items:center;
   padding: 0;
+  transition: background 2.1s ease;
+}
+
+#ui.loading footer{
+  background: rgba(30,30,30,1);
 }
 
 #ui footer * {
-
   padding: 5px;
   margin: 0;
 }
@@ -171,18 +197,19 @@
   color: rgba(50,60,50,0.7);
 }
 
-
 #ui statusbar{
+  font-family: monospace;
   line-height: 1.1em;
-  font-size: 0.5em;
-  color: rgba(50,200,50,0.7);
+  font-size: 0.7em;
+  color: rgba(50,120,50,0.7);
   margin: 5px;
+  font-weight: 300;
+  transition: content 0.7s;
 }
 
 #ui mousePos {
 
 }
-
 
 #ui .avatar {
   margin-left: auto;
@@ -205,8 +232,11 @@
   box-sizing: content-box;
   z-index: 5;
 }
+
 #ui .avatar::after{
   content: attr(data-label);
+  padding-left: 2px;
+  margin-top: -2px;
 }
 
 #userActions.loggedIn:hover .avatar{
@@ -217,7 +247,6 @@
 }
 
 #userActions.loggedIn{
-  
   transition: position 2s;
   padding: 4px;
   padding-bottom: 7px;
@@ -251,8 +280,6 @@
   width: 155px;
   background-color: #222;
 }
-
-
 
 #userActions.loggedIn:hover section{
   display: block;
