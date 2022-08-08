@@ -122,20 +122,51 @@ ui.init = (iGame) => {
     }
   });
 
-  iGame.states.subscribe(
-    'ui-framesSinceStart',
-    'framesSinceStart',
-    (newVal) => {
-      const property = 'framesSinceStart';
-      //console.log(property,newVal);
-      const elem = document.querySelector(`[data-binding="${property}"]`);
-      if (!elem) {
-        console.log('could not find element for '+property)
-        return false;
-      }; 
-      elem.textContent = newVal;
-    }
-  )
+
+  iGame.states.setRenderer('fps',(newVal,oldVal,element) => {
+    return `fps:${newVal.toString().padStart(3,'0')}`;
+  });
+
+  iGame.states.setRenderer('frameDelta',(newVal,oldVal,element) => {
+    return `Δ:${iGame.states.frameDelta}ms`;
+  });
+
+  iGame.states.addRenderCondition('framesSinceStart',(newVal,oldVal,element) => {
+    return (newVal % 20 === 0)
+  });
+
+
+  // iGame.states.subscribe(
+  //   'ui-framesSinceStart',
+  //   'framesSinceStart',
+  //   (newVal) => {
+  //     const property = 'framesSinceStart';
+  //     //console.log(property,newVal);
+  //     const elem = document.querySelector(`[data-binding="${property}"]`);
+  //     if (!elem) {
+  //       console.log('could not find element for '+property)
+  //       return false;
+  //     }; 
+  //     elem.textContent = newVal;
+  //   }
+  // );
+
+  //  iGame.states.subscribe(
+  //   'ui-fps',
+  //   'fps',
+  //   (newVal) => {
+  //     const property = 'fps';
+  //     //console.log(property,newVal);
+  //     const elem = document.querySelector(`[data-binding="${property}"]`);
+  //     if (!elem) {
+  //       console.log('could not find element for '+property)
+  //       return false;
+  //     }; 
+  //     elem.textContent = 
+  //   }
+  // );
+
+   
 }
 
 

@@ -20,57 +20,111 @@ const runstate = {
 }
 
 
-const states = new Proxy({
+let states = {
     fps: 0,
+    frameDelta: 0,
     framesSinceStart: 0,
     running: runstate.LOADING,
 
     _observers: [],
+    _renderers: new Map(),
+    _renderConditions: new Map(),
 
     subscribe: (name, property, callback) => {
       name = states._observers.length + name;
-      console.log('Game.states ',`add observer ${name} for property ${property}` );
+      //console.log('Game.states ',`add observer ${name} for property ${property}` );
       states._observers.push({name, property, callback});
       //console.log('subscribe',{property, callback})
       //console.log({obs})
-    }
-  },
-  {
-    get: (target, property) => {
-      return target[property];
-
-      if (![undefined,'function'].includes(typeof target[property])) 
-        console.log('get',{target, property})
     },
 
-    set: (target, property, value) => {
-      if ([undefined,'function'].includes(typeof target[property])) return
-      if (String(property).startsWith('_')) return
-      const oldVal = target[property];
-      const newVal = value;
+    addRenderCondition(property, func) {
+      if (!states._renderConditions.has(property)) {
+        states._renderConditions.set(property,[]);
+      }
 
-      if (newVal === oldVal) return true
-      //validate 
-      if (typeof newVal !== typeof oldVal) return false
-      //console.log('Game.states',property,{newVal,oldVal});
-      switch(property){
-        case 'running': 
-          if (!runstate.has(newVal)) {
-            console.warn(`invalid value "${newVal}"(${typeof newVal}) for gameStates.runstate`);
-            return true
-          } 
-          break;
+      states._renderConditions.get(property).push(func);
+    },
+
+    setRenderer: (property, func) => {
+      if (!states.hasOwnProperty(property) ||
+          (typeof func) != 'function'
+      ) {
+        console.warn(`could not set renderer for ${property}`);
+        return false
       } 
-      target[property] = newVal;
-      const observers = target._observers.filter(o => o.property === property);
-      //console.log(target._observers)
-      for (let observer of observers) observer.callback(newVal, oldVal);
+      states._renderers.set(property, func);
+    }
+  }
+
+let handler = {
+  get: (target, property) => {
+    return target[property];
+
+    if (![undefined,'function'].includes(typeof target[property])) 
+      console.log('get',{target, property})
+  },
+
+  set: (target, property, value) => {
+    if ([undefined,'function'].includes(typeof target[property])) return
+    if (String(property).startsWith('_')) return
+    const oldVal = target[property];
+    const newVal = value;
+
+    if (newVal == oldVal) return true
+    //validate 
+    if (typeof newVal !== typeof oldVal) {
+      console.warn(`invalid type ${typeof newVal} of value [${newVal}] for property ${property}`);
       return true
     }
+    //console.log('Game.states',property,{newVal,oldVal});
+    switch(property){
+      case 'running': 
+        if (!runstate.has(newVal)) {
+          console.warn(`invalid value "${newVal}" for gameStates.runstate`);
+          return true
+        } 
+        break;
+    } 
+    target[property] = newVal;
+    //console.log(target._observers)
 
-    
+    // -------read only data-bind ----------------
+
+    //find elements
+    const elements = document.querySelectorAll(`[data-binding="${property}"]`);
+    // if elements have been found
+    if (elements.length > 0) {
+      // loop elements
+      elements.forEach(element => {
+
+        if (target._renderConditions.has(property)) {
+          const results = target._renderConditions.get(property).map(func => {return func(newVal,oldVal,element)});
+          if (results.includes(false)) return;
+        }
+
+        // look if there is a renderer registered for this prperty
+        if (target._renderers.has(property)) {
+          // if there is a renderer use it to render newVal
+          const renderer = target._renderers.get(property);
+          element.textContent = renderer(newVal,oldVal,element);
+        } else {
+          // if not just apply the newValue
+          element.textContent = newVal; 
+        }
+        
+      })
+    }
+     
+    const observers = target._observers.filter(o => o.property === property);
+    for (let observer of observers) observer.callback(newVal, oldVal);
+    return true
   }
-);
+
+  
+}
+
+states = new Proxy(states,handler);
 
 
 export class Game {
