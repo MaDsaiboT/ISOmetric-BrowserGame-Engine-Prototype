@@ -12,6 +12,8 @@ import Websocket  from './websocket.js';
 import ui         from './UI/ui.js';
 
 import math from './_utils/math.js' // import our niftly litlle math libary 
+import * as utils from './_utils/utils.js' // import our niftly litlle math libary 
+
 
 
 import {createUUID, rememberUUID, UUIDs} from './_utils/uuid.js';
@@ -565,4 +567,8 @@ window.addEventListener('beforeunload', function (e) {
    // e.preventDefault();
    // e.returnValue = '';
 });
-export {state, drawViewport,screenToMap, iGame, instanceMap, instanceUserInput}
+export {state, drawViewport, screenToMap, 
+  iGame, iMap, iUserInput, 
+  width, height, ctxInteract,
+  viewPortOffset
+}

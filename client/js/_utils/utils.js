@@ -43,3 +43,20 @@ export function throttle2(fn, threshhold, scope) {
     }
   };
 }
+
+// create an itarable range of integers
+// between start and end via generator
+// can be used with the spread operator 
+// [...range(1,3)] -> [1,2,3]
+export function* range(start, end) {
+  yield start;
+  if (start === end) return;
+  yield* range(start + 1, end);
+}
+
+//reverses a string (abcd -> dcba)
+export const stringReverse = str => [...str].reverse().join('');
+
+//reduce an array of strings to the highest string length
+export const getMaxStringLength = arr => arr.reduce((r, c) => r.length >= c.length ? r.length : c.length);
+
