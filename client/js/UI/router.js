@@ -12,6 +12,8 @@ class Router {
       {path: '/settings/:theme',  name: 'settings', needsLogin: true, condition: _ => {return this.isLoggedIn()}}
     ];
 
+    this.baseTitle = document.title;
+
     this.observers = new Map();
 
     this.routeFallback = {
@@ -23,10 +25,9 @@ class Router {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     this.routeCurrent = this.routes[0];
     this.routeLast    = {};
-
     this.loggedIn     = false;
+    this.urlOrigin    = new URL(window.location.href).origin
 
-    this.urlOrigin = new URL(window.location.href).origin
     console.log(this.urlOrigin)
   }
 
@@ -51,19 +52,21 @@ class Router {
   }
 
   async route() {
-    console.time()
-    const potentialMatches = this.routes.map(route => {
-      if (typeof route.condition == 'function' && !route.condition()) return {
-         route: route,
-         result: null
-      }
+    //console.time(`route ${window.location.pathname}`)
+
+    const evaluateRoute = (route) => {
+      // if (typeof route.condition == 'function' && !route.condition()) return {
+      //   route: route,
+      //   result: null
+      // }
       return {
         route:  route,
         result: location.pathname.match(this.pathToRegex(route.path))
       }
-    });
+    }
 
-    //console.log(potentialMatches);
+    const potentialMatches = this.routes.map(route => evaluateRoute(route));
+    //console.dir(potentialMatches);
 
     let match = potentialMatches.find(
       potentialMatch => potentialMatch.result !== null
@@ -73,30 +76,34 @@ class Router {
       match = this.routeFallback;
       //window.history.replaceState(null, null, this.routeFallback.route.path);
     };
+
+    const params = this.getParams(match);
+
     
     if (this.routeCurrent.name != match.route.name) {
-      this.routeCurrent = Object.assign({},match.route);
-
-      //console.log(location.pathname,match.route.name);
-      //console.log(potentialMatches);
-      
+      this.routeCurrent = Object.assign({}, match.route);
+      document.title = `${this.baseTitle} - ${this.routeCurrent.name}`;
     }
 
     if (this.routeCurrent.name != this.routeLast?.name) {
-      this.routeLast = Object.assign({},this.routeCurrent)
+      this.routeLast = Object.assign({}, this.routeCurrent)
     } 
+    else if(!params?.length) {
+      //console.timeEnd(`route ${window.location.pathname}`);
+      //return this;
+    }
 
-    this.onRouteChange(this.getParams(match));
-    console.timeEnd();
+
+    console.log(`route() ${location.pathname}`);
+    if(params.length) console.dir(params);
+    this.onRouteChange(params);
+    //console.timeEnd(`route ${window.location.pathname}`);
     return this;
   }
 
   navigateTo(strurl) {
     let url = new URL(strurl,this.urlOrigin)
-
-    console.log('router.navigateTo',url.pathname)
-
-    history.pushState(null, null, strurl);
+    history.pushState(null, null, url);
     router.route();
   }
 
@@ -106,7 +113,7 @@ class Router {
       console.warn(`observer with id ${id} was overwritten`);
     }
 
-    console.log({id, observer}, typeof observer.callback)
+    //console.log({id, observer}, typeof observer.callback)
     if (typeof observer.name     !== 'string'   ) {
       console.warn(`observer ${id} could not be set - no path-name found`);
       return;
@@ -116,7 +123,8 @@ class Router {
       console.warn(`observer ${id} could not be set - no callback-function found`);
       return; 
     }
-    console.log(`router add observer ${id} for rout ${observer.name}`)
+
+    //console.log(`router add observer ${id} for rout ${observer.name}`)
     o.set(id, observer); 
   }
 
@@ -127,7 +135,7 @@ class Router {
  
   onRouteChange(params) {
     let id,observer;
-    console.log('onRouteChange',this.routeCurrent.name)
+    //console.log('onRouteChange',this.routeCurrent.name)
     const matchingObservers = new Map([...this.observers].filter(
       ([id, o]) => o.name == this.routeCurrent.name
     ));
@@ -139,8 +147,12 @@ class Router {
 
 const router = new Router(); 
 
-window.addEventListener('popstate', router.route());
+// react to user navigating around history
+window.addEventListener('popstate', (e) => {
+  router.route()
+});
 
+// react to user cliking on links / submit buttons
 document.body.addEventListener("click",e => {
   if(e.target.matches('[data-link]')) {
     e.preventDefault();
@@ -155,29 +167,43 @@ document.body.addEventListener("click",e => {
 
 
 const loader = document.getElementById('loader')
-const htmlChache = new Map();
+
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const loadHTML = async (element,filename, useCache=false) => {
-  let file = filename; 
-  if (!file) return
-  loader.classList.remove('hidden')
-  element.innerHTML = null;
+// the html cache 
+const htmlCache = new Map();
 
-  if (useCache && htmlChache.has(file)) {
-    element.innerHTML = htmlChache.get(file);
-    loader.classList.add('hidden');
+// load html from file and render it to an html element
+// and / or cache it 
+const loadHTML = async (element, filename, useCache=true, reload=false) => {
+  const file = filename; 
+  if (!file) return
+  
+  // remove cache entry if reaload is active
+  if (reload && htmlCache.has(file)) htmlCache.remove(file)
+
+  // if the html content is already cached - use it and quit!
+  if (element && useCache && htmlCache.has(file)) {
+    element.innerHTML = htmlCache.get(file);
     return
   }
 
-  let html = await fetch(`/html/${file}`)
-      html = await html.text();
+  // clear elements html content
+  if (element) element.innerHTML = null;
 
-  element.innerHTML = html;
-  loader.classList.add('hidden');
+  // load html from file
+  const html = await (await fetch(`/html/${file}`)).text();
+ 
+  // render html to element
+  if (element) element.innerHTML = html;
+
+  // chache html content
+  if (useCache && htmlCache.has(file)) htmlCache.set(file,html)
+  
+  //loader.classList.add('hidden');
   return;
 }
 
@@ -250,19 +276,24 @@ contentClose.addEventListener('click',e=>{
 });
 
 router.addObserver({
+  name: 'home',
+  callback: async (params,cur,last) => {
+    hideContentModal();
+  }
+})
+
+router.addObserver({
   name: 'login', 
   callback: async (params,cur,last) => {
-    console.log({cur,last});
+    //console.log({cur,last});
     //if (cur.name != last.name) hideContentModal();
-
-
+    //
     if ( !params.name ) {
       const res = await loadHTML(content,'logIn.html')
       showContentModal();
     }
 
     if ( params?.name?.length > 2 ) login(params.name)
-
   }
 });
 
@@ -287,7 +318,9 @@ router.addObserver({
 router.addObserver({
   name: 'settings', 
   callback: (params,cur,last) => {
-  console.log(params)
+    import('./webComponents/settings/settings.js')
+    .then( content.innerHTML = '<component-settings>')
+    .then( showContentModal())
   }
 },'settingsTheme');
 
