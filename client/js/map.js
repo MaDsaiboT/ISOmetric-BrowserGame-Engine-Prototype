@@ -32,10 +32,17 @@ class map {
         maxLen = Math.max(maxLen, row.length);
       }
     }
+    if (maxLen % 2 !== 0) maxLen++;
+
     //console.log('maxLen',maxLen);
     for (let [key,col] of Object.entries(jsondata)) {
       normalized[key] = [];
       for (let row of col) {
+        while (row.length < maxLen) row.push(0);
+        normalized[key].push(row);
+      }
+      while (normalized[key].length < maxLen) {
+        let row = [];
         while (row.length < maxLen) row.push(0);
         normalized[key].push(row);
       }
@@ -59,11 +66,14 @@ class map {
     .then( jsondata => {
       this.mapData     = jsondata;
       this.mapDataKeys = Object.keys(jsondata).reverse()
+      //this.rotate();
       ui.jasonMapData.textContent = JSON.stringify(jsondata);
       return true
     } )
+    
+    //.then( _ => this.drawGrid() )
+    //.then( _ => this.rotate() )
     .then( _ => this.clear() )
-    .then( _ => this.drawGrid() )
     .then( _ => this.draw()  )
     .then( _ => {
     
@@ -76,7 +86,7 @@ class map {
   }
 
   /**
-   * Clears the object.
+   * clears canvas.
    */
 
   clear(_ctx){
@@ -92,6 +102,41 @@ class map {
     );
   }
 
+  rotate(){
+    const key0 = this.mapDataKeys[0];
+    const n = this.mapData[key0].length;
+    let i,j,temp;
+    this.mapDataKeys.forEach(layer => {
+      console.log(`rotate layer ${layer}`)
+
+      //Step 1 transpose matrix (trurn rows to columns) 
+      for(i=0; i<n; i++) {
+        for(j=i; j<n; j++){
+          //do the swap
+          if (this.mapData[layer][i][j] === this.mapData[layer][j][i]) continue
+          console.log('swap',i,j,this.mapData[layer][i][j],this.mapData[layer][j][i]);
+          temp = this.mapData[layer][i][j];
+          this.mapData[layer][i][j] = this.mapData[layer][j][i];
+          this.mapData[layer][j][i] = temp;
+          console.log('swap',i,j,this.mapData[layer][i][j],this.mapData[layer][j][i]);
+          temp = null;
+        }
+      }
+
+
+      //Step 2 reverse the rows
+      for (i=0; i<n; i++) {
+        for (j=0; j<(n/2); j++) {
+         const temp = this.mapData[layer][i][j];
+          this.mapData[layer][i][j] = this.mapData[layer][i][n-1-j];
+          this.mapData[layer][i][n-1-j] = temp;
+        }
+      }
+    })
+    
+    
+  }
+
 
   /**
    * { function_description }
@@ -100,7 +145,7 @@ class map {
    */
   async draw() {
     if (!this.mapData) return 'no Map data';
-  
+    
     let data = this.mapData;
 
     //data = this.getHightMap();
@@ -144,6 +189,7 @@ class map {
     for (const [layerIndex,name] of Object.entries(this.mapDataKeys)) {
       //console.log(layerIndex,name);
       const layer = this.mapData[name];
+      console.log(`draw layer ${name}`)
       y = yInit;
       for (let row of layer) {
         x = xInit;
@@ -269,7 +315,7 @@ class map {
 
   getHighestLayer(x,y){
     let ret = -1
-    if (this.mapDataKeys === null) return; 
+    if (this.mapDataKeys === null) return ret; 
     //if (this.mapData) return -1;
     
     for (let [index,layerName] of Object.entries(this.mapDataKeys).reverse() ) {
@@ -307,11 +353,39 @@ class map {
    * @param      {int}  layerIndex  The layer index
    * @return     {boolean}
    */
+  getTileNeighborLeft(x,y,layerIndex) {
+    if (!this.mapData ) return 0;
+    const layerName = this.mapDataKeys[layerIndex];
+    return this.mapData?.[layerName]?.[y+1]?.[x] | 0
+  }
+
+  /**
+   * { function_description }
+   *
+   * @param      {int}  x           map coordinate 
+   * @param      {int}  y           map coordinate 
+   * @param      {int}  layerIndex  The layer index
+   * @return     {boolean}
+   */
   tileHasNeighborRight(x,y,layerIndex) {
     if (!this.mapData ) return false;
     const layerName = this.mapDataKeys[layerIndex];
-    if ( this.mapData?.[layerName]?.[y]?.[x+1] > 0 ) return true;
+    if ( this.mapData?.[layerName]?.[y]?.[x+1] ) return true;
     return false;
+  }
+
+  /**
+   * { function_description }
+   *
+   * @param      {int}  x           map coordinate 
+   * @param      {int}  y           map coordinate 
+   * @param      {int}  layerIndex  The layer index
+   * @return     {boolean}
+   */
+  getTileNeighborRight(x,y,layerIndex) {
+    if (!this.mapData ) return 0;
+    const layerName = this.mapDataKeys[layerIndex];
+    return this.mapData?.[layerName]?.[y]?.[x+1] | 0;
   }
 
   /**
@@ -326,9 +400,7 @@ class map {
     context = this.ctxMapBuffer;
 
     context.save();
-
     //console.log('drawTile',x,y,color);
-
     context.fillStyle = 'rgba(90,250,99,0.5)';
 
     context.translate(
@@ -368,9 +440,11 @@ class map {
     let hue = Math.random()*360;
     let sat = 60;
     let lig = 90;
-    let alpha = 0.9;
+    let alpha = 1;
 
     context.save();
+
+    let z = 0.5;
 
     switch(type){
       case 1:
@@ -380,15 +454,14 @@ class map {
       case 2:
         hue = 240;
         sat = 60;
+          z = 0.45;
+        alpha = 0.7;
         break;
       case 3:
         hue = 120;
         sat = 60;
         break;
     }
-
-    const z = 0.5;
-
 
     if (layerIndex > 1) {
       //context.globalCompositeOperation = 'lighter';
@@ -408,7 +481,7 @@ class map {
       );
     }
 
-    context.strokeStyle = '#222222';
+    //context.strokeStyle = '#222222';
 
     //draw top
     context.beginPath();
@@ -427,15 +500,17 @@ class map {
     );
     context.closePath();
 
-    context.fillStyle = `HSLA(${hue}, ${sat}%, ${lig}%, ${alpha} )`;
+    context.fillStyle   = `HSLA(${hue}, ${sat}%, ${lig}%, ${alpha} )`;
+    context.strokeStyle = `HSLA(${hue}, ${sat}%, ${lig-25}%, ${alpha} )`
+
     context.stroke();
     context.fill();
 
     if (this.drawSides) {
-      let alpha = 0.5;
-
-
-      if (!this.tileHasNeighborLeft(x,y,layerIndex)) {
+      (()=>{
+        const neighborLeft = this.getTileNeighborLeft(x,y,layerIndex)
+        if (! ([0,2].indexOf(neighborLeft)>-1)) return
+        if (type == 2 && neighborLeft == 2) return;
         // draw left
         lig = 70;
         context.beginPath();
@@ -446,14 +521,24 @@ class map {
         context.closePath();
 
         context.fillStyle = `HSLA(${hue}, ${sat}%, ${lig}%, ${alpha} )`;
+        context.strokeStyle = `HSLA(${hue}, ${sat}%, ${lig-25}%, ${alpha} )`
         context.stroke()
         context.fill();
-      }
-   
-      if (!this.tileHasNeighborRight(x,y,layerIndex) ) {
+      })();
+       
+      
+      (() => {
+        const neighborRight = this.getTileNeighborRight(x,y,layerIndex);
+        if (! ([0,2].indexOf(neighborRight) > -1)) return;
+
+        if (type == 2 && neighborRight == 2) return;
         // draw right
         lig = 60;
         sat -= 10;
+
+        context.fillStyle   = `HSLA(${hue}, ${sat}%, ${lig}%, ${alpha} )`;
+        context.strokeStyle = `HSLA(${hue}, ${sat}%, ${lig-25}%, ${alpha} )`
+
         context.beginPath();
         context.moveTo(this.tileWidth / 2, this.tileHeight / 2 - z * this.tileHeight);
         context.lineTo(0, this.tileHeight - z * this.tileHeight);
@@ -461,30 +546,33 @@ class map {
         context.lineTo(this.tileWidth / 2, this.tileHeight / 2);
         context.closePath();
 
-        context.fillStyle = `HSLA(${hue}, ${sat}%, ${lig}%, ${alpha} )`;
+
         context.stroke();
         context.fill();
-      }
+      })();
     }
-    lig = 60;
-
-    context.fillStyle = `HSLA(${hue}, ${sat}%, ${lig}%)`;
-
-    context.fillRect(-3,-3,6,6);
+      
+    //lig = 60;
+    //context.fillStyle = `HSLA(${hue}, ${sat}%, ${lig}%)`;
+    //context.fillRect(-3,-3,6,6);
 
     context.restore();
   }
 
-  drawCaracter(x,y,layerIndex,_ctx, Offset = {x:0,y:0}){
-    layerIndex = Number(layerIndex|0);
+  drawCaracter(position,hue=60,_ctx=null,Offset = {x:0,y:0}){
+    const x          = position.x;
+    const y          = position.y;
+    const layerIndex = position.layer;
+
     //console.log('drawBlock',layerIndex,x,y);
     const context = _ctx ?? this.ctxMapBuffer;
 
-    let hue = 60;
     let sat = 60;
     let lig = 90;
     let alpha = 0.9;
 
+    const tileHeight = this.tileHeight || 64; 
+    const tileWidth  = this.tileWidth  || 128; 
     context.save();
 
     const z = 1.1;
@@ -494,8 +582,8 @@ class map {
     }
 
     context.translate(
-        (x - y) * this.tileWidth  / 2 ,
-      ( (x + y) * this.tileHeight / 2 ) - 0.25 * this.tileHeight
+        (x - y) * tileWidth  / 2 ,
+      ( (x + y) * tileHeight / 2 ) - 0.25 * tileHeight
     );
 
     context.translate(
@@ -503,14 +591,10 @@ class map {
       -Offset.y
     )
 
-    if (context !== this.ctxMapBuffer) {
-
-    }
-
     if (layerIndex >= 1) {
       context.translate(
-       -( (0.5*layerIndex) - (0.5*layerIndex)) * this.tileWidth / 2,
-       -( (0.5*layerIndex) + (0.5*layerIndex)) * this.tileHeight / 2
+       -( (0.5*layerIndex) - (0.5*layerIndex)) * tileWidth / 2,
+       -( (0.5*layerIndex) + (0.5*layerIndex)) * tileHeight / 2
       );
     }
 
@@ -518,18 +602,18 @@ class map {
 
     //draw top
     context.beginPath();
-    context.moveTo(0,-z * this.tileHeight/2);
+    context.moveTo(0,-z * tileHeight/2);
     context.lineTo(
-       this.tileWidth  / 4,
-       this.tileHeight / 4 - z * this.tileHeight /2
+       tileWidth/4,
+       tileHeight/4 - z * tileHeight/2
     );
     context.lineTo(
       0,
-      this.tileHeight /2 -z * this.tileHeight /2
+      tileHeight/2 -z * tileHeight/2
     );
     context.lineTo(
-      -this.tileWidth  / 4,
-       this.tileHeight / 4 - z * this.tileHeight /2
+      -tileWidth/4,
+       tileHeight/4 - z * tileHeight/2
     );
     context.closePath();
 
@@ -542,10 +626,10 @@ class map {
     // draw left
     lig = 70;
     context.beginPath();
-    context.moveTo(-this.tileWidth / 4, this.tileHeight / 4 - z * this.tileHeight /2);
-    context.lineTo(0, this.tileHeight /2 - z * this.tileHeight/2);
-    context.lineTo(0, this.tileHeight / 2 );
-    context.lineTo(-this.tileWidth / 4, this.tileHeight / 4);
+    context.moveTo(-tileWidth/4, tileHeight/4 - z * tileHeight/2);
+    context.lineTo(0, tileHeight/2 - z * tileHeight/2);
+    context.lineTo(0, tileHeight/2 );
+    context.lineTo(-tileWidth/4, tileHeight/4);
     context.closePath();
 
     context.fillStyle = `HSLA(${hue}, ${sat}%, ${lig}%, ${alpha} )`;
@@ -556,10 +640,10 @@ class map {
     lig  = 60;
     sat -= 10;
     context.beginPath();
-    context.moveTo(this.tileWidth / 4, this.tileHeight / 4 - z * this.tileHeight /2);
-    context.lineTo(0, this.tileHeight/2 - z * this.tileHeight/2);
-    context.lineTo(0, this.tileHeight/2);
-    context.lineTo(this.tileWidth / 4, this.tileHeight / 4);
+    context.moveTo(tileWidth/4, tileHeight/4 - z * tileHeight/2);
+    context.lineTo(0, tileHeight/2 - z * tileHeight/2);
+    context.lineTo(0, tileHeight/2);
+    context.lineTo(tileWidth/4, tileHeight/4);
     context.closePath();
 
     context.fillStyle = `HSLA(${hue}, ${sat}%, ${lig}%, ${alpha} )`;
@@ -585,7 +669,7 @@ class map {
       (x + y) * this.tileHeight / 2
     );
 
-    context.drawImage(image, -image.width / 2, -image.height/2);
+    context.drawImage(image, -image.width/2, -image.height/2);
 
     //context.fillRect(-3,-3,6,6);
 
