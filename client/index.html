@@ -25,9 +25,9 @@
         </header>
         <main class="">
           <svg id="loader" width="120px" height="120px" viewBox="0 0 41 41">
-             <polygon 
+            <polygon 
               stroke-width="1"
-              stroke="rgba(2,2,2,0.05)"
+              stroke="rgba(2,2,2,0.25)"
               fill="none"
               points="18,1 22,1 40,37 37,40 3,40 1,37"
             />
@@ -49,12 +49,13 @@
             <span id="contentClose">X</span>
             <div id="content"></div>
           </section>
-          <display-directional-keys></display-directional-keys>
+          <display-directional-keys theme="dark"></display-directional-keys>
         </main>
         <footer>
           <statusbar>
-            <fps data-binding="fps"></fps>
-            <mousePos data-binding="mousePos">ffff</mousePos>
+            <span data-binding="fps"></span>
+            <span data-binding="frameDelta"></span>
+            <mousePos data-binding="mousePos"></mousePos>
           </statusbar>
           <span id="statusBarRight" data-binding="framesSinceStart">0</span>
           <copy>&copy; MaDsaiboT</copy>
