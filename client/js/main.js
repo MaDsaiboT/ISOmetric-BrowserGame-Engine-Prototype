@@ -63,12 +63,13 @@ let height = canvasMap.height = canvasInteract.height = window.innerHeight;
 
 //ctxMap.setTransform(1,0,0,1, w2, 200);
 
-const instanceMap = new map(ctxMap,ctxMapBuffer,tileHeight,tileWidth);
+const iMap = new map(ctxMap,ctxMapBuffer,tileHeight,tileWidth);
 const iGame       = new Game();
 
-var instanceUserInput = null;
+var iUserInput = null;
 
 var timeStamp;
+
 
 const render = property => {
   let elem = document.querySelector(`[data-binding="${property}"]`);
@@ -145,24 +146,24 @@ const state = setState({
 });
 
 function drawInteract() {
-  if ( !ui.mouseOnUi ) return; 
-  if ( !ui.mousePos.x || !ui.mousePos.x ) return;
+  //console.log(ui.mouseOnUi);
+  if ( !ui.states.mouseOnUi ) return; 
+  if ( !ui.states.mousePos.x || !ui.states.mousePos.x ) return;
 
-  const mapPos = screenToMap(mousePos.x, mousePos.y);
-  if ( mapPos.x == undefined || mapPos.y == undefined ) return;
+  if ( ui.states.mapPos?.x == undefined || ui.states.mapPos?.y == undefined ) return;
 
-  if (viewPortChanged) {
+  if (ui.viewPortChanged) {
     ui.elemToolTip.classList.add('hidden');
-    ctxInteract.clearRect(-width/2,-200,width,height);
-    return;
+    //ctxInteract.clearRect(-width/2,-200,width,height);
+    //return;
   }
 
-  if (JSON.stringify(mapPos) === JSON.stringify(lastMapPos)) return;
+  //if (JSON.stringify(mapPos) === JSON.stringify(lastMapPos)) return;
 
-  if (lastMapPos && lastMapPos.x >= 0 && lastMapPos.y >=0) {
-    const screenPos = mapToScreeen(
-      lastMapPos,
-      (viewPortOffsetLast | {x:0,y:0} )
+  if (ui.states.lastMapPos && ui.states.lastMapPos.x >= 0 && ui.states.lastMapPos.y >=0) {
+    ui.states.screenPos = mapToScreeen(
+      ui.states.lastMapPos,
+      (ui.states.viewPortOffsetLast | {x:0,y:0} )
     );
     //console.log('screenPos',screenPos);
     //ctxInteract.fillStyle='rgba(250,50,50,.69)';
@@ -171,25 +172,26 @@ function drawInteract() {
     //ctxInteract.clearRect(screenPos.x-2,screenPos.y-2, tileWidth+4, tileHeight+4);
   }
 
-  if (mapPos.x < 0 || mapPos.y < 0) return;
-  let layer = instanceMap.getHighestLayer(mapPos.x,mapPos.y);
+  if (ui.states.mapPos.x < 0 || ui.states.mapPos.y < 0) return;
+  let layer = iMap.getHighestLayer(ui.states.mapPos.x,ui.states.mapPos.y);
   if (!(layer > -1)) return;
 
   ctxInteract.clearRect(-width/2,-200,width,height);
   //ctxInteract.fillStyle = 'rgba(20,50,20,0.3)';
   //ctxInteract.fillRect(-width/2,-200,width,height);
   ui.elemToolTip.classList.remove('hidden');
-  drawTile(mapPos.x,mapPos.y,layer,'green',ctxInteract);
-  lastMapPos = mapPos;
+  //console.log(ui.mapPos.x,ui.mapPos.y,layer);
+  drawTile(ui.states.mapPos.x,ui.states.mapPos.y,layer,undefined,ctxInteract);
+  //ui.lastMapPos = Object.assign({},ui.mapPos);
   //console.log('lastMapPos',lastMapPos);
 
   // console.log(mousePos);
   // console.log(mapPos);
 }
 
-function drawViewport(instanceUserInput,compare = true) {
+function drawViewport(iUserInput,compare = true) {
 
-  if (!instanceUserInput) return; 
+  if (!iUserInput) return; 
   if (viewPortOffset === undefined) return; 
 
   var ctx = ctxMap;
@@ -200,7 +202,7 @@ function drawViewport(instanceUserInput,compare = true) {
   let bw = ctxMapBuffer.canvas.width;
   let bh = ctxMapBuffer.canvas.height;
 
-  if (instanceUserInput.arrowKeysActive()) {
+  if (iUserInput.arrowKeysActive()) {
     if ( viewPortVelocity <= 3)      viewPortVelocity  = 3;
     if ( iGame.states.framesSinceStart % 15 === 0) viewPortVelocity += 1;
     if ( viewPortVelocity >= 15)     viewPortVelocity  = 13;
@@ -382,7 +384,7 @@ function resizeCanvas() {
 
   ctxMap.setTransform(1,0,0,1, w2, 200);
 
-  drawViewport(instanceUserInput, false);
+  drawViewport(iUserInput, false);
 }
 
   //state.console = 'lol';
@@ -435,7 +437,8 @@ function loop(_timeStamp) {
 
   if (unixTime == unixTimeLast) fps += 1
   else {
-    state.fps = fps;
+    iGame.states.fps = fps;
+    iGame.states.frameDelta = +deltaTime.toFixed(2).substring(0,5);
     fps = 0
     unixTimeLast = unixTime;
   };
@@ -445,7 +448,7 @@ function loop(_timeStamp) {
 
   //ui.elemMousePos.textContent  = '';
 
-  if (viewPortChanged) {
+  if (viewPortChanged || iUserInput.arrowKeysActive()) {
    // ui.elemMousePos.textContent  += ` Viewport `;
    // ui.elemMousePos.textContent  += ` x:${viewPortOffset.x}`;
    // ui.elemMousePos.textContent  += ` y:${viewPortOffset.y}`;
@@ -534,9 +537,13 @@ async function hash(string) {
 iGame.states.subscribe('main-running','running',(newVal,oldVal) => {
   console.log('main','running',{newVal,oldVal})
 
-  switch (newVal){
+  switch (newVal) {
     case Game.runstate.LOADING:
       console.log('────── loading ──────')
+      iGame.states.framesSinceStart = 0;
+      iGame.states.frameDelta       = 0;
+      iGame.states.fps              = 0;
+      console.clear()
       break;
 
     case Game.runstate.RUNNING:
