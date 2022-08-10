@@ -27,8 +27,13 @@ let states = {
     running: runstate.LOADING,
 
     _observers: [],
-    _renderers: new Map(),
-    _renderConditions: new Map(),
+    _renderers:         new Map(),
+    _renderConditions:  new Map(),
+    _renderClear:       new Map([
+      ['fps',true],
+      ['frameDelta',true],
+      ['framesSinceStart',false],
+    ]),
 
     subscribe: (name, property, callback) => {
       name = states._observers.length + name;
@@ -100,7 +105,10 @@ let handler = {
 
         if (target._renderConditions.has(property)) {
           const results = target._renderConditions.get(property).map(func => {return func(newVal,oldVal,element)});
-          if (results.includes(false)) return;
+          if (results.includes(false)) {
+            if (target._renderClear.get(property)) element.textContent = ''; 
+            return;
+          }
         }
 
         // look if there is a renderer registered for this prperty
