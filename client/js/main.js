@@ -280,16 +280,14 @@ iUserInput = new userInput();
 ui.init(iGame,iUserInput);
 
 iMap.load('map001').then(
-   async _ => {
+  async _ => {
     await ecs.systemAdd('walkPaths',{priority:200,active:true});
     await ecs.systemAdd('movement', {priority:400,active:true});
+    await ecs.systemAdd('facing',   {priority:410,active:true});
     await ecs.systemAdd('drawCubes',{priority:500,active:true,runOnPause:true});
 
     await ecs.sortSystems();
 
-    drawCubes = ecs.systemGet('drawCubes')
-    movement  = ecs.systemGet('movement')
-   
     drawViewport(iUserInput,false);
 
     iGame.states.running = Game.runstate.RUNNING;
@@ -299,36 +297,8 @@ iMap.load('map001').then(
   }
 );
 
-const easeTo = (position,target, ease=0.05) => {
-  const dx = target.x - position.x;
-  const dy = target.y - position.y;
-  position.x += dx * ease;
-  position.y += dy * ease;
-  if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
-    position.x = target.x;
-    position.y = target.y;
-  }
-  return position;
-}
 
-const getFacingAlias = (facing) => {
-  if(facing.x ==  1 && facing.y ==  0) return 'north'
-  if(facing.x ==  1 && facing.y ==  1) return 'northeast'
-  if(facing.x ==  1 && facing.y == -1) return 'northwest'
-
-  if(facing.x ==  0 && facing.y ==  1) return 'east' 
-  if(facing.x ==  0 && facing.y == -1) return 'west'
-
-  if(facing.x == -1 && facing.y ==  0) return 'south' 
-  if(facing.x == -1 && facing.y ==  1) return 'southeast'
-  if(facing.x == -1 && facing.y == -1) return 'northwest'
-
-  return null;
-}
-
-let movement  = null;
-let drawCubes = null;
-
+let facingLast = new Map();
 
 iGame.states.framesSinceStart = 0;
 let x = 0;
@@ -379,6 +349,19 @@ function loop(_timeStamp) {
 
   ecs.runSystems(timeStamp);
   
+
+  const names = ['cube-001','cube-002'];
+  names.forEach(name=>{
+    if (!facingLast.has(name)) facingLast.set(name, null);
+    const ent = ecs.entityGetByName(name);
+
+    if (ent && ent.has('facing') && ent.facing.alias != facingLast.get(name)) {
+      console.log(`${name} facing: ${ent.facing.alias}`); 
+      facingLast.set(name,ent.facing.alias);
+    }
+  })
+  
+
   if (timer > nextFrame) {
     timer = 0;
   }
@@ -469,7 +452,7 @@ const runthis = async e => {
   path1.steps.push({x:1,y:3,layer:0});
   path1.steps.push({x:1,y:2,layer:0});
 
-  const ent1 = ecs.entityCreate(`cube-002`,true,['position']);
+  const ent1 = ecs.entityCreate(`cube-001`,true,['position','facing']);
 
   ent1.componentAdd('path', path1);
 
@@ -500,7 +483,7 @@ const runthis = async e => {
   path2.steps.push({x:4,y:4,layer:0});
   path2.steps.push({x:3,y:4,layer:0});
 
-  const ent2 = ecs.entityCreate(`cube-003`,true,['position']);
+  const ent2 = ecs.entityCreate(`cube-002`,true,['position','facing']);
 
   ent2.position.x = 2;
   ent2.position.y = 4;
@@ -536,7 +519,7 @@ const runthis = async e => {
   path3.steps.push({x:7,y: 9,layer:0});
   path3.steps.push({x:8,y: 9,layer:0});
 
-  const ent3 = ecs.entityCreate(`cube-003`,true,['position']);
+  const ent3 = ecs.entityCreate(`cube-003`,true,['position','facing']);
 
   ent3.position.x = 8;
   ent3.position.y = 8;

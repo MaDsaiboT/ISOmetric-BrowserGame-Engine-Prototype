@@ -46,6 +46,10 @@ class ecs {
     return entity;
   }
 
+  static entityGetByName(name){
+    return ecs.entities.find(ent=>ent.name == name) || null;
+  }
+
   static systemGet(name) {
     const system = ecs.systems.find(system=>system.name == name);
     return system;
