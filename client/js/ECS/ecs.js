@@ -1,4 +1,10 @@
+"use strict";
 import { getMaxStringLength } from '../_utils/utils.js';
+import { Game }               from '../GAME/game.js';
+
+const iGame = new Game();
+
+
 // this extension to the native Map object exists to deliver deep clones 
 class componentsMap extends Map {
   get( property ) {
@@ -45,7 +51,7 @@ class ecs {
     return system;
   }
 
-  static async systemAdd(name, priority=200,active=false) {
+  static async systemAdd(name, {priority=200,active=false,runOnPause=false}={}) {
 
     if (typeof name !== 'string') {
       console.warn(`ecs.systemAdd: can not add system  ${name}, given name is not a string`);
@@ -184,6 +190,32 @@ const handlerEntity = {
     console.log(deleteProperty,target.id,property)
   }
 }
+
+
+iGame.states.subscribe('ecs-running','running', (newVal, oldVal) => {
+  //console.log('main','running',{newVal,oldVal})
+
+  switch (newVal) {
+    case Game.runstate.LOADING:
+      break;
+
+    case Game.runstate.RUNNING:
+      ecs.systems
+        .filter(sys=>sys.runOnPause === false)
+        .forEach(sys=>sys.active = true);
+      break;
+
+    case Game.runstate.PAUSED:
+      ecs.systems
+        .filter(sys=>sys.runOnPause === false)
+        .forEach(sys=>sys.active = false);
+      break;
+  }
+
+  ecs.infoSystems();
+  
+});
+
 
 export {ecs, handlerEntity}
 export default ecs;
