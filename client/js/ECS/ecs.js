@@ -1,11 +1,18 @@
 import { getMaxStringLength } from '../_utils/utils.js';
+// this extension to the native Map object exists to deliver deep clones 
+class componentsMap extends Map {
+  get( property ) {
+    if (super.has(property)) return JSON.parse(JSON.stringify(super.get(property)));
+    else return super.get(property)
+  }
+}
 
 class ecs {
 
   static entities     = [];
   static entitiesMap  = new Map;
   static systems      = [];
-  static components   = new Map();
+  static components   = new componentsMap();
 
   static generateId(){
     return (this.entities.length + 1)
