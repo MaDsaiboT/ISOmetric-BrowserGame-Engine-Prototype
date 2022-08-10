@@ -128,8 +128,12 @@ states = new Proxy(states,handler);
 
 
 export class Game {
+  static instance = null; 
   static runstate = runstate
+
   constructor(){
+    if (Game.instance instanceof Game) return Game.instance; 
+
     this.states = states;
     
     this.keyPause = 'KeyP';
@@ -142,6 +146,8 @@ export class Game {
       }
   
     });
+
+    Game.instance = this;
   }
 
   pause() {
