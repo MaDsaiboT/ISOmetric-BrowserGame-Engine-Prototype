@@ -1,23 +1,31 @@
+"use strict";
 import ecs from '../ecs.js'
 
-const system_walkPaths = _ => {
-  //var start = window.performance.now();
+const system_walkPaths = () => {
   const entities = ecs.entities
     .filter(ent=>ent.active)
     .filter(ent=>ent.has('position'))
+    .filter(ent=>ent.has('targetPos'))
     .filter(ent=>ent.has('path'))
 
-
-  //console.log('system_walkPaths');
-  // var end = window.performance.now();
-  // var time = end - start;
-
-  // console.log('system_movement - filter:',time.toFixed(5),'ms');
-  // console.log('system_movement - found:', entities.length);
-
   entities.forEach(entity => {
+    let step = entity.path.step || 0;
+    let stepTarget = entity.path.steps[step];
 
-  
+    if ( entity.position.x == stepTarget.x && 
+         entity.position.y == stepTarget.y 
+    ) {
+      //get next step
+      step++;
+      if (step > entity.path.steps.length - 1) step = 0;
+      stepTarget = entity.path.steps[step];
+
+      //updaze components data
+      entity.path.step = step;
+      entity.targetPos.x = stepTarget.x;
+      entity.targetPos.y = stepTarget.y;
+      entity.tags.add('moving');
+    }
   })
 }
 
