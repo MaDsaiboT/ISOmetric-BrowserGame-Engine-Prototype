@@ -16,7 +16,7 @@ class componentsMap extends Map {
 class ecs {
 
   static entities     = [];
-  static entitiesMap  = new Map;
+  static entitiesMap  = new Map();
   static systems      = [];
   static components   = new componentsMap();
 
@@ -75,48 +75,51 @@ class ecs {
     
       const callback = module.default; 
       ecs.systems.push({
-        name:     name,
-        active:   active,
-        priority: priority,
-        callback: callback
+        name:       name,
+        active:     active,
+        priority:   priority,
+        runOnPause: runOnPause,
+        callback:   callback
       });
     })
   
-   
- 
   }
 
-  static async sortSystems() {
-    await ecs.systems.sort((sysA, sysB)=>{return sysB.priroity - sysA.priority});
-
+  static infoSystems(){
     const mNL = getMaxStringLength(ecs.systems.map(sys=>sys.name));
 
-    console.log('systems sorted')
     ecs.systems.forEach(
       sys=>console.log(
         `${sys.priority} - ${sys.name.padEnd(mNL,' ')} - ${(sys.active ? 'active' : 'inactive')}`)
     );
   }
 
+  static async sortSystems() {
+    await ecs.systems.sort((sysA, sysB)=>{return sysB.priroity - sysA.priority});
+    console.log('systems sorted by priority')
+  }
+
   static runSystems() {
     ecs.systems.filter(sys=>sys.active).forEach(sys=>sys.callback())
   }
 
-};
+}
+
+
 
 ecs.components.set('position',     {x:0, y:0, layer:0});
 ecs.components.set('facing',       {x:0, y:0, alias:'north'});
 ecs.components.set('targetPos',    {x:0, y:0, layer:0});
-ecs.components.set('targetEntity', {x:0, y:0, layer:0});
+ecs.components.set('targetEntity', {id:null});
 ecs.components.set('path',         {step:0, steps:[]});
 ecs.components.set('targetable',   {targetetBy: null});
 ecs.components.set('selectable',   {selected:  false});
 
 class Entity {
   constructor(id, name=null, active=false) {
-    this.id         = id;
-    this.name       = name ?? id;
-    this.active     = active;
+    this.id          = id;
+    this.name        = name ?? id;
+    this.active      = active;
     this._components = new Map();
     this.tags        = new Set();
     return new Proxy(this,handlerEntity)
