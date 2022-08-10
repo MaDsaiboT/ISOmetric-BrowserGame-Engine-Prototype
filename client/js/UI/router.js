@@ -242,6 +242,8 @@ const navUserActions = document.getElementById('userActions');
 const content        = document.getElementById('content');
 const contentClose   = document.getElementById('contentClose');
 const contentWraper  = document.getElementById('contentWraper');
+const minimap        = document.getElementById('canvasMapBufferContainer');
+
 
 const login = async name => {
   const userName = name.trim().slice(0, 20); 

@@ -1,36 +1,27 @@
+"use strict";
 
 const tileWidth  = 128;
 const tileHeight = 64;
 
-import {Game}     from './GAME/game.js'
+import {Game}     from './GAME/game.js';
 import router     from './UI/router.js';
 
 import userInput  from './ECS/systems/userInput.js';
 
-import {ecs} from './ECS/ecs.js';
+import {ecs}      from './ECS/ecs.js';
 
 import map        from './map.js';
 import Websocket  from './websocket.js';
 
 import ui         from './UI/ui.js';
 
-import math from './_utils/math.js' // import our niftly litlle math libary 
-import * as utils from './_utils/utils.js' // import our niftly litlle math libary 
-
-
+import math       from './_utils/math.js'; // import our niftly litlle math libary 
+import * as utils from './_utils/utils.js'; // import our niftly litlle utils libary 
 
 import {createUUID, rememberUUID, UUIDs} from './_utils/uuid.js';
 
-
 //import ProgressBar            from './UI/webComponents/progressbar.js';
 import DisplayDirectionalKeys from './UI/webComponents/displayDirectionalKeys.js';
-
-let mapData = {};
-let mousePos = {
-  x: undefined,
-  y: undefined
-}
-
 
 
 let lastMapPos = {x:-1,y:-1};
@@ -39,17 +30,15 @@ let fps = 0;
 
 let autoPause = false;
 
-var viewPortOffset     = {x: 0,y: 20}
-var viewPortOffsetLast = {x: -1,y: -1}
+var viewPortOffset     = {x: 0,y: 20};
+var viewPortOffsetLast = {x: -1,y: -1};
 var viewPortChanged    = false;
 var viewPortVelocity   = 0;
 var init = true;
 
-let paused = false;
-
 let lastTime = 0;
 const fpsTarget = 60;
-const nextFrame = 1000/fpsTarget
+const nextFrame = 1000/fpsTarget;
 let timer = 0;
 let fpsDisplay;
 
@@ -57,8 +46,6 @@ const canvasMap         = document.getElementById('canvasMap');
 const canvasMapBuffer   = document.getElementById('canvasMapBuffer');
 const canvasInteract    = document.getElementById('canvasInteract');
 const viewPortIndicator = document.getElementById('viewPortIndicator');
-
-const content = document.getElementById('content');
 
 const ctxMap            = canvasMap.getContext('2d');
 const ctxMapBuffer      = canvasMapBuffer.getContext('2d',{ willReadFrequently: true });
@@ -69,126 +56,40 @@ let height = canvasMap.height = canvasInteract.height = window.innerHeight;
 
 //ctxMap.setTransform(1,0,0,1, w2, 200);
 
-const iMap = new map(ctxMap,ctxMapBuffer,tileHeight,tileWidth);
-const iGame       = new Game();
+const iMap  = new map(ctxMap,ctxMapBuffer,tileHeight,tileWidth);
+const iGame = new Game();
 
 var iUserInput = null;
 
 var timeStamp;
 
-
-const render = property => {
-  let elem = document.querySelector(`[data-binding="${property}"]`);
-  if (!elem) {
-    console.log('could not find element for '+property)
-    return false;
-  }; 
-
-  switch (property) {
-
-    case 'mousePos':
-      if (state.mousePos.x == -1 || state.mousePos.y == -1)
-        elem.textContent = '';
-      else {
-        elem.textContent = `X:${state.mousePos.x} Y:${state.mousePos.y}`;
-      }
-      break;
-
-
-    case 'console':
-      if (elem.textContent) {
-        elem.textContent = elem.textContent+`\n`+state.console
-      }
-      else {
-        elem.textContent = state.console
-      }
-      break
-
-    default: 
-      elem.textContent = state[property];
-      break;
-  }
-}
-
-const setState = state => {
-  return new Proxy(state,{
-    set: (target, property, value) => {
-
-      if (!target) return false;
-
-      if (typeof target[property] != typeof value) 
-        throw new Error(
-            `type mismatch for ${property}(${typeof target[property]})` 
-          + `\n value ${value} (${typeof value})` 
-          );
-
-      if (typeof target[property] == 'object') {
-        render(property);
-      }
-
-      if (target[property] !== value) {
-        target[property] = value;
-        render(property);
-      };
-      
-      
-      return true;
-    },
-
-    get: (target, property) => {
-      return target[property];
-    }
-
-  });
-}
-
-const state = setState({
-  mousePos : {x:0,y:0},
-  console: ''
-});
-
 function drawInteract() {
-  //console.log(ui.mouseOnUi);
+
   if ( !ui.states.mouseOnUi ) return; 
   if ( !ui.states.mousePos.x || !ui.states.mousePos.x ) return;
 
-  if ( ui.states.mapPos?.x == undefined || ui.states.mapPos?.y == undefined ) return;
+  if ( ui.states.mapPos.x === undefined || ui.states.mapPos.y === undefined ) return;
 
-  if (ui.viewPortChanged) {
+  if ( ui.viewPortChanged || iGame.states.runstate === Game.runstate.RUNNING ) {
     ui.elemToolTip.classList.add('hidden');
-    //ctxInteract.clearRect(-width/2,-200,width,height);
-    //return;
   }
-
-  //if (JSON.stringify(mapPos) === JSON.stringify(lastMapPos)) return;
 
   if (ui.states.lastMapPos && ui.states.lastMapPos.x >= 0 && ui.states.lastMapPos.y >=0) {
     ui.states.screenPos = mapToScreeen(
       ui.states.lastMapPos,
       (ui.states.viewPortOffsetLast | {x:0,y:0} )
     );
-    //console.log('screenPos',screenPos);
-    //ctxInteract.fillStyle='rgba(250,50,50,.69)';
-    //ctxInteract.fillRect(screenPos.x-2,screenPos.y-2, tileWidth+4, tileHeight+4);
-
-    //ctxInteract.clearRect(screenPos.x-2,screenPos.y-2, tileWidth+4, tileHeight+4);
   }
 
   if (ui.states.mapPos.x < 0 || ui.states.mapPos.y < 0) return;
   let layer = iMap.getHighestLayer(ui.states.mapPos.x,ui.states.mapPos.y);
-  if (!(layer > -1)) return;
 
-  ctxInteract.clearRect(-width/2,-200,width,height);
-  //ctxInteract.fillStyle = 'rgba(20,50,20,0.3)';
-  //ctxInteract.fillRect(-width/2,-200,width,height);
-  ui.elemToolTip.classList.remove('hidden');
-  //console.log(ui.mapPos.x,ui.mapPos.y,layer);
+   if (layer < 0 ||  ui.viewPortChanged ) {
+    ui.elemToolTip.classList.add('hidden');
+    return;
+  }
+
   drawTile(ui.states.mapPos.x,ui.states.mapPos.y,layer,undefined,ctxInteract);
-  //ui.lastMapPos = Object.assign({},ui.mapPos);
-  //console.log('lastMapPos',lastMapPos);
-
-  // console.log(mousePos);
-  // console.log(mapPos);
 }
 
 function drawViewport(iUserInput,compare = true) {
@@ -224,7 +125,7 @@ function drawViewport(iUserInput,compare = true) {
       viewPortOffset.y -= viewPortVelocity;
     }
 
-    viewPortOffset.x = math.clamp(viewPortOffset.x,-(bw*0.5 - w*.5),(bw*0.5 - w*0.5));
+    viewPortOffset.x = math.clamp(viewPortOffset.x,-(bw*0.5 - w*0.5),(bw*0.5 - w*0.5));
     viewPortOffset.y = math.clamp(viewPortOffset.y,0,(bh - h));
 
     viewPortOffset.x = Math.floor(viewPortOffset.x);
@@ -236,9 +137,10 @@ function drawViewport(iUserInput,compare = true) {
 
   if (compare) {
     viewPortChanged = !(
-        viewPortOffset.x == viewPortOffsetLast.x
-     && viewPortOffset.y == viewPortOffsetLast.y) 
-
+      viewPortOffset.x == viewPortOffsetLast.x &&
+      viewPortOffset.y == viewPortOffsetLast.y
+    )
+ 
     if (!viewPortChanged) return; 
   }
   viewPortOffsetLast.x = viewPortOffset.x;
@@ -459,7 +361,7 @@ function loop(_timeStamp) {
 
   ui.elemMousePos.textContent  = '';
 
-  if (viewPortChanged || iUserInput.arrowKeysActive()) {
+  if (ui.viewPortChanged || iUserInput.arrowKeysActive()) {
     ui.elemMousePos.textContent  += ` Viewport `;
     ui.elemMousePos.textContent  += ` x:${viewPortOffset.x}`;
     ui.elemMousePos.textContent  += ` y:${viewPortOffset.y}`;
@@ -477,7 +379,6 @@ function loop(_timeStamp) {
 
   ecs.runSystems(timeStamp);
   
-
   if (timer > nextFrame) {
     timer = 0;
   }
@@ -485,26 +386,14 @@ function loop(_timeStamp) {
     timer += deltaTime;
   }
 
-  if(!paused) {
-    ui.main.classList.remove('paused');
-    ui.mainMenu.classList.add('hidden');
-    if (autoPause === true) {
-      if (exitedPage) pause_counter = ` | game will pause in ${10-(unixTime - exitedPage)}s`;
-      if (exitedPage && unixTime - exitedPage > 9) {
-        console.log('pause game due to loss of focus');
-        paused = true
-        exitedPage = null;
-      }
+  if (autoPause === true) {
+    if (exitedPage) pause_counter = ` | game will pause in ${10-(unixTime - exitedPage)}s`;
+    if (exitedPage && unixTime - exitedPage > 9) {
+      console.log('pause game due to loss of focus');
+      paused = true
+      exitedPage = null;
     }
-
   }
-  if(paused) {
-    ui.main.classList.add('paused');
-    ui.mainMenu.classList.remove('hidden');
-    return
-  }
-
- 
 
   const displayDirectionalKeys = document.querySelector('display-directional-keys');
   displayDirectionalKeys.active = {
@@ -554,6 +443,10 @@ iGame.states.subscribe('main-running','running', (newVal, oldVal) => {
     case Game.runstate.RUNNING:
       console.log('────── running ──────')
       if (!loopActive) loop(0)
+      break;
+
+    case Game.runstate.PAUSED:
+      console.log('────── paused  ──────')
       break;
   }
   
@@ -659,11 +552,12 @@ const runthis = async e => {
 
 window.setTimeout(runthis,5000);
 
-window.addEventListener('beforeunload', function (e) {
+window.addEventListener('beforeunload', e => {
    // e.preventDefault();
    // e.returnValue = '';
 });
-export {state, drawViewport, screenToMap, 
+
+export {drawViewport, screenToMap, 
   iGame, iMap, iUserInput, 
   width, height, ctxInteract,
   viewPortOffset
