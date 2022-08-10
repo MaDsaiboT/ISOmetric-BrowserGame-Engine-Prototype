@@ -9,7 +9,6 @@ import redis
 
 from collections import namedtuple
 
-
 DEBUG = True
 
 staticRoute = os.path.dirname('../client/');
@@ -79,7 +78,7 @@ def notFound(e):
   if file_extension == '':
     return redirect(url_for('index'))
 
-  if file_extension not in ['html','htm','js','css','png','ico','ttf']:
+  if file_extension not in ['html','htm','js','css','png','ico','ttf','svg']:
     return 'unsuportet file extension', 404
 
   return 'not found', 404
