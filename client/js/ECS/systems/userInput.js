@@ -34,8 +34,8 @@ class userInput {
   }
 
   bindEvents(){
-    window.addEventListener( 'keydown',  e => this.onKeyDown(e)  );
-    window.addEventListener( 'keyup',    e => this.onKeyUp(e)    );
+    window.addEventListener( 'keydown', e => this.onKeyDown(e) );
+    window.addEventListener( 'keyup',   e => this.onKeyUp(e)   );
     //window.addEventListener( 'mouseout', e => this.OnMouseOut(e) );
   }
 
@@ -52,8 +52,8 @@ class userInput {
     const e = event;
     const mouseX = e.pageX;
     const mouseY = e.pageY;
-    if ((mouseY >= 0 && mouseY <= window.innerHeight)
-     && (mouseX >= 0 && mouseX <= window.innerWidth)
+    if ((mouseY >= 0 && mouseY <= window.innerHeight) &&
+        (mouseX >= 0 && mouseX <= window.innerWidth)
     ) {
       this.exitedPage = null;
       return;
@@ -63,7 +63,7 @@ class userInput {
 
    //================================================
   //Keybooard
-  key(kCode) { return (this.keyState[kCode] == true); }
+  key(kCode) { return (this.keyState[kCode] === true); }
 
   
   arrowKeysActive() {
@@ -93,18 +93,9 @@ class userInput {
     }
   }
 
-  isShift(){  return this.keyState[ 16 ]; }
-  isCtrl(){ return this.keyState[ 17 ]; }
-
-  
+  isShift() { return this.keyState[ 16 ]; }
+  isCtrl()  { return this.keyState[ 17 ]; }
 
 }
-
-
-
-
-
-
-
 
 export default userInput
