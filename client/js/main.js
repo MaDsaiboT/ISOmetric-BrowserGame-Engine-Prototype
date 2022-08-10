@@ -378,26 +378,24 @@ iUserInput = new userInput();
 ui.init(iGame,iUserInput);
 
 iMap.load('map001').then(
-   async v => {
-    await ecs.systemAdd('walkPaths',200, true);
-    await ecs.systemAdd('movement', 400, true);
-    await ecs.systemAdd('drawCubes',500, true);
+   async _ => {
+    await ecs.systemAdd('walkPaths',{priority:200,active:true});
+    await ecs.systemAdd('movement', {priority:400,active:true});
+    await ecs.systemAdd('drawCubes',{priority:500,active:true,runOnPause:true});
 
     await ecs.sortSystems();
 
     drawCubes = ecs.systemGet('drawCubes')
     movement  = ecs.systemGet('movement')
    
-
     drawViewport(iUserInput,false);
 
-    iGame.states.running =  Game.runstate.RUNNING;
+    iGame.states.running = Game.runstate.RUNNING;
   },
   err => {
     console.log(err)
   }
 );
-
 
 const easeTo = (position,target, ease=0.05) => {
   const dx = target.x - position.x;
