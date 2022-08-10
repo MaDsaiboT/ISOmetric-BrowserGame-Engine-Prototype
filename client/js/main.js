@@ -399,38 +399,6 @@ iMap.load('map001').then(
 );
 
 
-const path = [];
-path.push({x:2,y:4});
-path.push({x:2,y:3});
-path.push({x:2,y:2});
-path.push({x:2,y:1});
-path.push({x:3,y:1});
-path.push({x:3,y:2});
-path.push({x:3,y:3});
-path.push({x:4,y:3});
-path.push({x:5,y:3});
-path.push({x:5,y:4});
-path.push({x:4,y:4});
-path.push({x:3,y:4});
-
-function* gen(path) {
-  let i = -1;
-  while (true) {
-    i++
-    if (i >= path.length) i=0;
-    yield path[i];
-  }
-}
-
-const pathIterator = gen(path);
-
-const cube = {}
-cube.hue = 60;
-cube.position = {x:2,y:4,layer:0};
-cube.path = path;
-cube.targetPos = pathIterator.next().value;
-cube.facing = {x: 1, y:1};
-
 const easeTo = (position,target, ease=0.05) => {
   const dx = target.x - position.x;
   const dy = target.y - position.y;
@@ -510,55 +478,6 @@ function loop(_timeStamp) {
   drawInteract();
 
   ecs.runSystems(timeStamp);
-  
-  const targetPos = cube.targetPos;
-
-  if (iGame.states.running === Game.runstate.RUNNING) {
-     
-    if (  cube.position.x == cube.targetPos.x 
-      &&  cube.position.y == cube.targetPos.y
-    ) {
-
-      cube.targetPos = pathIterator.next().value;
-     
-
-      // if (cube.target < cube.path.length -1) {
-      //   cube.target ++;
-      //   //console.log(cube.target,cube.path[cube.target])
-      // } else {
-      //   cube.target = 0;
-      // }
-      
-    } 
-    else {
-      facing.x = math.clamp(Math.round(cube.position.x-cube.targetPos.x),-1,1)
-      facing.y = math.clamp(Math.round(cube.position.y-cube.targetPos.y),-1,1)
-      facing.alias = getFacingAlias(facing);
-
-      if (  
-        getFacingAlias(facing) != null &&
-        getFacingAlias(cube.facing) != getFacingAlias(facing)
-      ) {
-        cube.facing.x = facing.x;
-        cube.facing.y = facing.y;
-        cube.facing.alias = getFacingAlias(cube.facing);
-        //console.log(cube.facing.alias)
-      }
-
-      cube.position = easeTo(cube.position, cube.targetPos)
-    }
-  }
-
-  //console.log(cube.position)
-
-  drawTile(targetPos.x,targetPos.y,0,'rgba(90,20,20,0.2)',ctxInteract);
-
-  iMap.drawCaracter(
-    cube.position,
-    cube.hue,
-    ctxInteract,
-    viewPortOffset
-  );
   
 
   if (timer > nextFrame) {
@@ -645,27 +564,99 @@ iGame.states.subscribe('main-running','running', (newVal, oldVal) => {
 
 const runthis = async e => {
 
+  const path1 = ecs.components.get('path');
+
+  console.log(path1);
+
+  path1.step = 0
+  path1.steps.push({x:1,y:1,layer:0});
+  path1.steps.push({x:1,y:2,layer:0});
+  path1.steps.push({x:1,y:3,layer:0});
+  path1.steps.push({x:0,y:3,layer:0});
+  path1.steps.push({x:1,y:3,layer:0});
+  path1.steps.push({x:1,y:4,layer:0});
+  path1.steps.push({x:1,y:3,layer:0});
+  path1.steps.push({x:1,y:2,layer:0});
 
   const ent1 = ecs.entityCreate(`cube-002`,true,['position']);
 
+  ent1.componentAdd('path', path1);
+
   ent1.position.x = 1;
   ent1.position.y = 1;
+
   ent1.componentAdd('targetPos', ecs.components.get('targetPos'));
+
   ent1.targetPos.x = 1;
-  ent1.targetPos.y = 3;
+  ent1.targetPos.y = 1;
 
   ent1.tags.add('moving');
 
- 
-  const ent2 = ecs.entityCreate(`cube-002`,true,['position']);
-  ent2.position.x = 5;
-  ent2.position.y = 6;
+
+  const path2 = ecs.components.get('path');
+  path2.step = 0
+
+  path2.steps.push({x:2,y:4,layer:0});
+  path2.steps.push({x:2,y:3,layer:0});
+  path2.steps.push({x:2,y:2,layer:0});
+  path2.steps.push({x:2,y:1,layer:0});
+  path2.steps.push({x:3,y:1,layer:0});
+  path2.steps.push({x:3,y:2,layer:0});
+  path2.steps.push({x:3,y:3,layer:0});
+  path2.steps.push({x:4,y:3,layer:0});
+  path2.steps.push({x:5,y:3,layer:0});
+  path2.steps.push({x:5,y:4,layer:0});
+  path2.steps.push({x:4,y:4,layer:0});
+  path2.steps.push({x:3,y:4,layer:0});
+
+  const ent2 = ecs.entityCreate(`cube-003`,true,['position']);
+
+  ent2.position.x = 2;
+  ent2.position.y = 4;
+
+  ent2.componentAdd('path', path2);
   ent2.componentAdd('targetPos', ecs.components.get('targetPos'));
-  ent2.targetPos.x = 3;
-  ent2.targetPos.y = 6;
+
+  ent2.targetPos.x = 2;
+  ent2.targetPos.y = 4;
 
   ent2.tags.add('moving');
 
+
+  const path3 = ecs.components.get('path');
+  path3.step = 0
+
+  path3.steps.push({x:8,y: 8,layer:0});
+  path3.steps.push({x:8,y: 9,layer:0});
+  path3.steps.push({x:7,y: 9,layer:0});
+  path3.steps.push({x:6,y: 9,layer:0});
+  path3.steps.push({x:5,y: 9,layer:0});
+  path3.steps.push({x:5,y: 8,layer:0});
+  path3.steps.push({x:4,y: 8,layer:0});
+  path3.steps.push({x:3,y: 8,layer:0});
+  path3.steps.push({x:3,y: 9,layer:0});
+  path3.steps.push({x:3,y:10,layer:0});
+  path3.steps.push({x:3,y:11,layer:0});
+  path3.steps.push({x:4,y:11,layer:0});
+  path3.steps.push({x:5,y:11,layer:0});
+  path3.steps.push({x:5,y:10,layer:0});
+  path3.steps.push({x:6,y:10,layer:0});
+  path3.steps.push({x:7,y:10,layer:0});
+  path3.steps.push({x:7,y: 9,layer:0});
+  path3.steps.push({x:8,y: 9,layer:0});
+
+  const ent3 = ecs.entityCreate(`cube-003`,true,['position']);
+
+  ent3.position.x = 8;
+  ent3.position.y = 8;
+
+  ent3.componentAdd('path', path3);
+  ent3.componentAdd('targetPos', ecs.components.get('targetPos'));
+
+  ent3.targetPos.x = 8;
+  ent3.targetPos.y = 8;
+
+  ent3.tags.add('moving');
 }
 
 window.setTimeout(runthis,5000);
