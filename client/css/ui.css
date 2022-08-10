@@ -150,7 +150,7 @@
 
 #ui #console {
   background: rgba(30,30,30,0.9);
-  backdrop-filter: blur(2px) grayscale(0.4);
+  backdrop-filter: blur(2.5px) grayscale(0.7);
   min-width:  500px;
  
   position: absolute;
@@ -165,7 +165,7 @@
 #ui footer {
   white-space: nowrap;
 
-  background: rgba(30,30,30,0.6);
+  background: rgba(30,30,30,0.8);
   backdrop-filter: blur(2px) grayscale(0.4);
 
   flex-shrink: 0;
@@ -303,4 +303,42 @@
 #userActions.loggedIn hr{
   border: none;
   border-bottom: 1px solid #111;
+}
+
+#canvasMapBuffer{
+  position: relative;
+  user-select: none;
+  background: transparent;
+  z-index: 3;
+
+}
+
+#canvasMapBufferContainer{
+  transform-origin: top left;
+  transform: scale(.06);
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  z-index: 4;
+  background: rgba(20,20,20,0.8);
+  border-top-right-radius: 120px;
+  border-bottom-right-radius: 120px;
+  backdrop-filter: blur(50px) grayscale(0.9);
+  user-select: none;
+  transition: left 0.5s cubic-bezier(0.01, 0.74, 1, 1);
+}
+
+#canvasMapBufferContainer.hidden{
+  display: block !important;
+  left: -250px;
+}
+
+#viewPortIndicator{
+  position: absolute;
+  top: 0;
+  left: 0px;
+  box-sizing: border-box;
+  border: 5px solid #0f0;
+  z-index: 5;
+  border-radius: 120px;
 }
