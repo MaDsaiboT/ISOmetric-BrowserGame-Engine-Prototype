@@ -430,6 +430,8 @@ iGame.states.subscribe('main-running','running', (newVal, oldVal) => {
 
     case Game.runstate.PAUSED:
       console.log('────── paused  ──────')
+      const ent = ecs.entityGetByName('cube-001');
+      console.log(ent.serialize());
       break;
   }
   

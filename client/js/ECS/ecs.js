@@ -152,19 +152,28 @@ class Entity {
     //console.log(this,'has',property, ret)
     return ret;
   }
+
+  serialize(){
+    const s = {};
+    ['id','name','active'].forEach(prop=>s[prop] = this[prop]);
+    s.tags = [...this.tags];
+    this._components.forEach((comp,name)=>{
+      comp = JSON.parse(JSON.stringify(comp)) // create deep clone
+      delete comp.parent; // remove parent atribute
+      s[name] = comp;
+    });
+    return JSON.stringify(s,null,"  ");
+  }
 };
 
 
 const handlerEntity = {
 
-
   // has:(target, property, receiver) => {
-  //   if (target._components.has(property)) {
-  //     return target._components.has(property);
-  //   }
+  //   if (target._components.has(property)) return true;
   //   return Reflect.has(target,property, receiver);
   // },
-  // 
+  
   getOwnPropertyDescriptor: (target, property, receiver) => {
     //console.log('getOwnPropertyDescriptor',target, property);
     return Reflect.getOwnPropertyDescriptor(target, property, receiver)
@@ -172,13 +181,11 @@ const handlerEntity = {
 
   get: (target, property, receiver) => {
 
-    if (target?._components?.has(property)) {
+    if (target?._components?.has(property)) 
       return target._components.get(property);
-    }
-
+    
     //console.log(target.id, property);
-    if (property == 'tags') 
-      return target.tags
+    if (property == 'tags') return target.tags
 
     //if (property.substring(0,1) == '_') return false 
     return Reflect.get(target,property, receiver);
@@ -229,6 +236,8 @@ iGame.states.subscribe('ecs-running','running', (newVal, oldVal) => {
       ecs.systems
         .filter(sys=>sys.runOnPause === false)
         .forEach(sys=>sys.active = false);
+
+
       break;
   }
 
