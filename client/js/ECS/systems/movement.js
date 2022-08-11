@@ -3,8 +3,7 @@ import ecs from '../ecs.js'
 
 const system_movement = () => {
 
-  const entities = ecs.entities
-    .filter(ent=>ent.active)
+  const entities = ecs.getActiveEntities()
     .filter(ent=>ent.tags.has('moving'))
     .filter(ent=>ent.has('position'))
     .filter(ent=>ent.has('targetPos'))

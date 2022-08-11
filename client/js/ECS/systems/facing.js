@@ -4,8 +4,7 @@ import math from '../../_utils/math.js'
 
 const system_facing = () => {
 
-  const entities = ecs.entities
-    .filter(ent=>ent.active)
+  const entities = ecs.getActiveEntities()
     .filter(ent=>ent.has('facing'))
     .filter(ent=>ent.has('position'))
     .filter(ent=>ent.has('targetPos'))

@@ -2,8 +2,7 @@
 import ecs from '../ecs.js'
 
 const system_walkPaths = () => {
-  const entities = ecs.entities
-    .filter(ent=>ent.active)
+  const entities = ecs.getActiveEntities()
     .filter(ent=>ent.has('position'))
     .filter(ent=>ent.has('targetPos'))
     .filter(ent=>ent.has('path'))

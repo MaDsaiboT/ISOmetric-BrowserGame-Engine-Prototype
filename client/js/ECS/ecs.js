@@ -20,6 +20,8 @@ class ecs {
   static systems      = [];
   static components   = new componentsMap();
 
+  static _cache       = new Map();
+
   static generateId(){
     return (this.entities.length + 1)
       .toString()
@@ -51,7 +53,7 @@ class ecs {
   }
 
   static systemGet(name) {
-    const system = ecs.systems.find(system=>system.name == name);
+    const system = ecs.systems.find(sys=>sys .name == name);
     return system;
   }
 
@@ -107,9 +109,16 @@ class ecs {
     ecs.systems.filter(sys=>sys.active).forEach(sys=>sys.callback())
   }
 
+  static getActiveEntities() {
+    if (!ecs._cache.has('activeEtities')) {
+      const entities = ecs.entities.filter(ent=>ent.active);
+      if (!!entities.length) ecs._cache.set('activeEtities', entities)
+    }
+
+    return ecs._cache.get('activeEtities') || [];
+  }
+
 }
-
-
 
 ecs.components.set('position',     {x:0, y:0, layer:0});
 ecs.components.set('facing',       {x:0, y:0, alias:'north'});
@@ -188,6 +197,10 @@ const handlerEntity = {
     ) {
       console.error('prohibited property mutation',property,value); 
       return true;
+    }
+
+    if (property == 'active' && value != target.active) {
+      ecs._cache.remove('activeEtities')
     }
 
     return Reflect.set(target, property, value, receiver);
