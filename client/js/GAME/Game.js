@@ -135,12 +135,13 @@ let handler = {
 states = new Proxy(states,handler);
 
 
-export class Game {
-  static instance = null; 
-  static runstate = runstate
+class Game {
+  static instance = null;
+  static runstate = runstate;
 
-  constructor(){
-    if (Game.instance instanceof Game) return Game.instance; 
+  constructor() {
+    if (Game.instance !== null) return Game.instance;
+    Game.instance = this;
 
     this.states = states;
     
@@ -152,10 +153,7 @@ export class Game {
         case this.keyPause: this.pause(); break;
         case this.keyLoad:  this.load(); break;
       }
-  
     });
-
-    Game.instance = this;
   }
 
   pause() {
@@ -176,3 +174,6 @@ export class Game {
   
 }
 
+const iGame = new Game();
+
+export { Game };

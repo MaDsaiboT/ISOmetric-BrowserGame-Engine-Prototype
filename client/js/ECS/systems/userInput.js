@@ -1,5 +1,8 @@
 import * as main  from '../../main.js';
 import * as ui    from '../../UI/ui.js';
+import { Game } from '../../GAME/Game.js';
+
+const iGame = new Game();
 
 class userInput {
 

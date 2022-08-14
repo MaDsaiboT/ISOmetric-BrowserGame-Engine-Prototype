@@ -3,7 +3,8 @@
 const tileWidth  = 128;
 const tileHeight = 64;
 
-import {Game}     from './GAME/game.js';
+import {Game}     from './GAME/Game.js';
+
 import router     from './UI/router.js';
 
 import userInput  from './ECS/systems/userInput.js';

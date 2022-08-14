@@ -2,7 +2,7 @@
 
 import * as main  from '../main.js';
 import * as utils from '../_utils/utils.js';
-import {Game}     from '../GAME/game.js';
+import {Game}     from '../GAME/Game.js';
 
 
 const ui = {};
