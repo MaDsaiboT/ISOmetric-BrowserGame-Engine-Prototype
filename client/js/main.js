@@ -286,10 +286,12 @@ ui.init(iGame,iUserInput);
 
 iMap.load('map001').then(
   async _ => {
-    await ecs.systemAdd('walkPaths',{priority:200,active:true});
-    await ecs.systemAdd('movement', {priority:400,active:true});
-    await ecs.systemAdd('facing',   {priority:410,active:true});
-    await ecs.systemAdd('drawCubes',{priority:500,active:true,runOnPause:true});
+ 
+    await ecs.systemAdd('selectOnClick',{priority:100,active:true,runOnPause:true});
+    await ecs.systemAdd('walkPaths',    {priority:200,active:true});
+    await ecs.systemAdd('movement',     {priority:400,active:true});
+    await ecs.systemAdd('facing',       {priority:410,active:true});
+    await ecs.systemAdd('drawCubes',    {priority:500,active:true,runOnPause:true});
 
     await ecs.sortSystems();
 
@@ -472,7 +474,8 @@ const runthis = async e => {
   ent1.targetPos.y = 1;
 
   ent1.tags.add('moving');
-
+  ent1.tags.add('selectable');
+ 
 
   const path2 = ecs.components.get('path');
   path2.step = 0
@@ -502,7 +505,7 @@ const runthis = async e => {
   ent2.targetPos.y = 4;
 
   ent2.tags.add('moving');
-
+  ent2.tags.add('selectable');
 
   const path3 = ecs.components.get('path');
   path3.step = 0
@@ -538,17 +541,17 @@ const runthis = async e => {
   ent3.targetPos.y = 8;
 
   ent3.tags.add('moving');
-}
+};
 
-window.setTimeout(runthis,5000);
+window.setTimeout(runthis,500);
 
 window.addEventListener('beforeunload', e => {
    // e.preventDefault();
    // e.returnValue = '';
 });
 
-export {drawViewport, screenToMap, 
+export {drawViewport, screenToMap, mapToScreeen,
   iGame, iMap, iUserInput, 
   width, height, ctxInteract,
   viewPortOffset
-}
+};
