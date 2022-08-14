@@ -355,16 +355,16 @@ function loop(_timeStamp) {
   ecs.runSystems(timeStamp);
   
 
-  const names = ['cube-001','cube-002'];
-  names.forEach(name=>{
-    if (!facingLast.has(name)) facingLast.set(name, null);
-    const ent = ecs.entityGetByName(name);
+  // const names = ['cube-001','cube-002'];
+  // names.forEach(name=>{
+  //   if (!facingLast.has(name)) facingLast.set(name, null);
+  //   const ent = ecs.entityGetByName(name);
 
-    if (ent && ent.has('facing') && ent.facing.alias != facingLast.get(name)) {
-      console.log(`${name} facing: ${ent.facing.alias}`); 
-      facingLast.set(name,ent.facing.alias);
-    }
-  })
+  //   if (ent && ent.has('facing') && ent.facing.alias != facingLast.get(name)) {
+  //     console.log(`${name} facing: ${ent.facing.alias}`); 
+  //     facingLast.set(name,ent.facing.alias);
+  //   }
+  // })
   
 
   if (timer > nextFrame) {
