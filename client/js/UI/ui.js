@@ -178,4 +178,5 @@ ui.init = iGame => {
 
 
 
-export default ui
+export { ui };
+export default ui;
