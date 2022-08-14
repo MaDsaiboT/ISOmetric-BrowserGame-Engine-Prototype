@@ -196,14 +196,18 @@ function mapToScreeen(mapPos,_viewPortOffset) {
     _viewPortOffset = viewPortOffset;
   }
 
-  let x = (mapPos.x - mapPos.y) * tileWidth/2 - tileWidth/2;
-  let y = (mapPos.x + mapPos.y) * tileHeight/2 - tileHeight;
+  let x = (mapPos.x - mapPos.y) * tileWidth/2;
+  let y = (mapPos.x + mapPos.y) * tileHeight/2;
 
-  //x += width /2;
-  //y += 200;
+  x += width /2;
+  y += 200;
 
   x -= (_viewPortOffset.x);
   y -= (_viewPortOffset.y);
+
+
+  x = Math.round(x);
+  y = Math.round(y);
 
   return {'x':x,'y':y};
 }
