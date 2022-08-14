@@ -1,5 +1,6 @@
 import * as main  from '../../main.js';
-import * as ui    from '../../UI/ui.js';
+
+import { ui }   from '../../UI/ui.js';
 import { Game } from '../../GAME/Game.js';
 
 const iGame = new Game();
@@ -11,7 +12,7 @@ class userInput {
   constructor() {
     //Keyboard State Data
 
-    if (userInput.instance instanceof userInput) {
+    if (userInput.instance !== null) {
       return userInput.instance;
     } 
 
@@ -30,25 +31,154 @@ class userInput {
     this.viewPortOffsetLast   = {x:0, y:0};
     this.viewPortChanged      = false;
 
-    this.bindEvents();
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //Mouse State Data
+    this.wheelUpdateOn  = 0;
+    this.wheelValue   = 0;
+
+    this.isMouseActive  = false;
+    this.leftMouse    = false;
+    this.middleMouse  = false;
+    this.rightMouse   = false;
+    this.coord      = {
+      x:0,  //current position
+      y:0,
+      ix:0, //initial down position
+      iy:0,
+      px:0, //previous move position
+      py:0,
+      idx:0,  //Delta since inital
+      idy:0,
+      pdx:0,  //Delta since previous
+      pdy:0
+    };
+
+    this.bound = new Map(); 
+
+    this.bound.set('mousedown', this.onMouseDown.bind(this) );
+    this.bound.set('mouseup',   this.onMouseUp.bind(this)   );
+
+
+    window.addEventListener( 'keydown', e => this.onKeyDown(e) );
+    window.addEventListener( 'keyup',   e => this.onKeyUp(e)   );
+
+    iGame.states.subscribe('input-running','running',(newVal,oldVal) => {
+      console.log(`input-running ${oldVal} >> ${newVal}`);
+
+      switch (newVal) {
+        
+        case Game.runstate.RUNNING:
+          this.bindEvents();
+          break;
+
+        case Game.runstate.LOADING:
+
+          this.unBindEvents();
+          break;
+      }
+    });
   
     userInput.instance = this;
   }
 
   bindEvents(){
-    window.addEventListener( 'keydown', e => this.onKeyDown(e) );
-    window.addEventListener( 'keyup',   e => this.onKeyUp(e)   );
+    console.log('bind events');
     //window.addEventListener( 'mouseout', e => this.OnMouseOut(e) );
+    //ui.main.addEventListener( 'mousemove', e => this.OnMouseMove(e) );
+    //
+    //
+    //console.log('input bind events',ui.main);
+
+    ui.main.addEventListener("contextmenu", this.onContextMenu );
+    ui.main.addEventListener("mousedown",   this.bound.get('mousedown'));
+    ui.main.addEventListener("mouseup",     this.bound.get('mouseup'));
+   // ui.main.addEventListener("mouseout",    this.onMouseUp.bind(this) );
+   // ui.main.addEventListener("mousewheel",  this.onMouseWheel.bind(this) );
+
   }
+
+  unBindEvents(){
+    console.log('un-bind events');
+    //ui.main.removeEventListener("contextmenu", this.onContextMenu );
+    ui.main.removeEventListener("mousedown",   this.bound.get('mousedown') );
+    ui.main.removeEventListener("mouseup",     this.bound.get('mouseup'));
+  }
+
+
+  updateCoords(e){
+    //Current Position
+    this.coord.x = e.pageX;
+    this.coord.y = e.pageY;
+
+    //Change since last
+    this.coord.pdx = this.coord.x - this.coord.px;
+    this.coord.pdy = this.coord.y - this.coord.py;
+
+    //Change Since Initial
+    this.coord.idx = this.coord.x - this.coord.ix;
+    this.coord.idy = this.coord.y - this.coord.iy; 
+  }
+
+  onContextMenu(e){ 
+    //console.log('onContextMenu');
+    e.preventDefault(); 
+    e.stopPropagation(); 
+    return false; 
+  }
+
+  onMouseDown(e){
+    e.preventDefault(); 
+    e.stopPropagation();
+
+    this.coord.ix  = this.coord.px  = this.coord.x   = e.x;
+    this.coord.iy  = this.coord.py  = this.coord.y   = e.y;
+    this.coord.pdx = this.coord.idx = this.coord.pdy = this.coord.idy = 0;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    switch(e.which){
+      case 1: this.leftMouse    = true; break;
+      case 2: this.middleMouse  = true; break;
+      case 3: this.rightMouse   = true; break;
+    }
+
+    //console.log(this.coord);
+
+    this.isMouseActive = (this.leftMouse || this.middleMouse || this.rightMouse);
+  }
+
+  onMouseUp(e){
+    e.preventDefault(); 
+    e.stopPropagation();
+    this.updateCoords(e);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    switch(e.which){
+      case 1: this.leftMouse    = false; break;
+      case 2: this.middleMouse  = false; break;
+      case 3: this.rightMouse   = false; break;
+    }
+
+    this.isMouseActive = (this.leftMouse || this.middleMouse || this.rightMouse);
+
+  }
+
 
   OnKeyUp(event) {
     if (this.viewPortChanged) {
       console.log('OnKeyUp',event);
-      main.drawViewport(this);
+      //main.drawViewport(this);
       this.viewPortChanged = false;
       this.viewPortVelocity = 1;
     }
+  }
+
+  OnMouseMove(event) {
+    event.preventDefault();
+    //event.stopPropagation();
+    this.mousePos.x = event.pageX;
+    this.mousePos.y = event.pageY;
+    console.log(this.mousePos);
   }
 
   OnMouseOut(event) {
@@ -101,4 +231,6 @@ class userInput {
 
 }
 
-export default userInput
+const iUserInput = new userInput();
+
+export default userInput;
