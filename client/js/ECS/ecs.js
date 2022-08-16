@@ -1,66 +1,61 @@
-"use strict";
+'use strict';
 import { getMaxStringLength } from '../_utils/utils.js';
-import { Game }               from '../GAME/Game.js';
+import { Game } from '../GAME/Game.js';
 
 const iGame = new Game();
 
-
-// this extension to the native Map object exists to deliver deep clones 
+// this extension to the native Map object exists to deliver deep clones
 class componentsMap extends Map {
-  get( property ) {
-    if (super.has(property)) return JSON.parse(JSON.stringify(super.get(property)));
-    else return super.get(property)
+  get(property) {
+    if (super.has(property))
+      return JSON.parse(JSON.stringify(super.get(property)));
+    else return super.get(property);
   }
 }
 
 class ecs {
+  static entities = [];
+  static entitiesMap = new Map();
+  static systems = [];
+  static components = new componentsMap();
 
-  static entities     = [];
-  static entitiesMap  = new Map();
-  static systems      = [];
-  static components   = new componentsMap();
+  static _cache = new Map();
 
-  static _cache       = new Map();
-
-  static generateId(){
-    return (this.entities.length + 1)
-      .toString()
-      .padStart(12,'0')
+  static generateId() {
+    return (this.entities.length + 1).toString().padStart(12, '0');
   }
 
-  static entityCreate(name,active=false,components=[],tags=[]) {
+  static entityCreate(name, active = false, components = [], tags = []) {
     const id = ecs.generateId();
-    const entity = new Entity(id,name,active);
-    let compName,tag;
+    const entity = new Entity(id, name, active);
+    let compName, tag;
     for (compName of components) {
-      if (ecs.components.has(compName)){
-        const component = ecs.components.get(compName)
-        entity.componentAdd(compName,component);
-      }
-      else {
-        console.log(`component ${compName} not found`)
+      if (ecs.components.has(compName)) {
+        const component = ecs.components.get(compName);
+        entity.add(compName, component);
+      } else {
+        console.log(`component ${compName} not found`);
       }
     }
 
     for (tag of tags) entity.tags.add(tag);
-    
+
     ecs.entities.push(entity);
     return entity;
   }
 
-  static entityGetByName(name){
-    return ecs.entities.find(ent=>ent.name == name) || null;
+  static entityGetByName(name) {
+    return ecs.entities.find(ent => ent.name === name) || null;
   }
 
   static systemGet(name) {
-    const system = ecs.systems.find(sys=>sys .name == name);
+    const system = ecs.systems.find(sys => sys.name === name);
     return system;
   }
 
-  static async systemAdd(name, {priority=200,active=false,runOnPause=false}={}) {
-
+  static async systemAdd(name,{ priority = 200, active = false, runOnPause = false }) {
     if (typeof name !== 'string') {
-      console.warn(`ecs.systemAdd: can not add system  ${name}, given name is not a string`);
+      console.warn(`ecs.systemAdd: can not add system ${name}, given name is not a string`);
       return false;
     }
 
@@ -69,182 +64,174 @@ class ecs {
       return false;
     }
 
-    // if (typeof callback !== 'function') {
-    //   console.warn(`ecs.systemAdd: can not add system  ${name}, given callback is not a function`);
-    //   return false;
-    // }
-
-    let callback = null;
-
-    await import(`${location.origin}/js/ECS/systems/${name}.js`)
-    .then(module =>{
-    
-      const callback = module.default; 
-      ecs.systems.push({
-        name:       name,
-        active:     active,
-        priority:   priority,
-        runOnPause: runOnPause,
-        callback:   callback
-      });
-    })
-  
+    await import(`${location.origin}/js/ECS/systems/${name}.js`).then(
+      module => {
+        const callback = module.default;
+        ecs.systems.push({ name, active, priority, runOnPause, callback});
+      }
+    );
   }
 
-  static infoSystems(){
-    const mNL = getMaxStringLength(ecs.systems.map(sys=>sys.name));
+  static infoSystems() {
 
-    ecs.systems.forEach(
-      sys=>console.log(
-        `${sys.priority} - ${sys.name.padEnd(mNL,' ')} - ${(sys.active ? 'active' : 'inactive')}`)
+    const sysNames = ecs.systems.map(sys => sys.name);
+    const mNL      = getMaxStringLength(sysNames);
+
+    //console.log(mNL,sysNames);
+
+    ecs.systems.forEach(sys =>
+      console.log(
+        sys.priority
+        + ' ── '
+        + (sys.name + ' ').padEnd(mNL+3, '─')
+        + ' '
+        + (sys.active ? 'active' : 'inactive')
+      )
     );
   }
 
   static async sortSystems() {
-    await ecs.systems.sort((sysA, sysB)=>{return sysB.priroity - sysA.priority});
-    console.log('systems sorted by priority')
+    await ecs.systems.sort((sysA, sysB) => sysB.priroity - sysA.priority);
+    console.log('systems sorted by priority');
   }
 
   static runSystems() {
-    ecs.systems.filter(sys=>sys.active).forEach(sys=>sys.callback())
+    ecs.systems.filter(sys => sys.active).forEach(sys => sys.callback());
   }
 
   static getActiveEntities() {
     if (!ecs._cache.has('activeEtities')) {
-      const entities = ecs.entities.filter(ent=>ent.active);
-      if (!!entities.length) ecs._cache.set('activeEtities', entities)
+      const entities = ecs.entities.filter(ent => ent.active);
+      if (!!entities.length) ecs._cache.set('activeEtities', entities);
     }
-
     return ecs._cache.get('activeEtities') || [];
   }
 
+  // prettier-ignore
+  static setUpComponents(){
+    ecs.components.set('position',     { x: 0, y: 0, layer: 0});
+    ecs.components.set('facing',       { x: 0, y: 0, alias: 'north' });
+    ecs.components.set('targetPos',    ecs.components.get('position'));
+    ecs.components.set('targetEntity', { id: null });
+    ecs.components.set('path',         { step: 0, steps: [] });
+    ecs.components.set('targetable',   { targetedBy: null });
+    ecs.components.set('selectable',   { selected: false });
+  }
 }
 
-ecs.components.set('position',     {x:0, y:0, layer:0});
-ecs.components.set('facing',       {x:0, y:0, alias:'north'});
-ecs.components.set('targetPos',    {x:0, y:0, layer:0});
-ecs.components.set('targetEntity', {id:null});
-ecs.components.set('path',         {step:0, steps:[]});
-ecs.components.set('targetable',   {targetetBy: null});
-ecs.components.set('selectable',   {selected:  false});
+ecs.setUpComponents();
 
 class Entity {
-  constructor(id, name=null, active=false) {
-    this.id          = id;
-    this.name        = name ?? id;
-    this.active      = active;
+  constructor(id, name = null, active = false) {
+    this.id = id;
+    this.name = name ?? id;
+    this.active = active;
     this._components = new Map();
-    this.tags        = new Set();
-    return new Proxy(this,handlerEntity)
+    this.tags = new Set();
+    return new Proxy(this, handlerEntity);
   }
 
-  componentRemove(name) {
-    this._components.set(name,undefined);
+  remove(name) {
+    this._components.set(name, undefined);
   }
 
-  componentAdd(name,_object=null) {
-    this._components.set(name,Object.assign({parent:this.id},_object));
+  add(name, _object = null) {
+    this._components.set(name, Object.assign({ parent: this.id }, _object));
   }
 
-  has(property){
+  has(property) {
     let ret = this.hasOwnProperty(property);
-    if (this._components.has(property)) ret = true
+    if (this._components.has(property)) ret = true;
     //console.log(this,'has',property, ret)
     return ret;
   }
 
-  serialize(){
+  serialize() {
     const s = {};
-    ['id','name','active'].forEach(prop=>s[prop] = this[prop]);
+    ['id', 'name', 'active'].forEach(prop => (s[prop] = this[prop]));
     s.tags = [...this.tags];
-    this._components.forEach((comp,name)=>{
-      comp = JSON.parse(JSON.stringify(comp)) // create deep clone
+    this._components.forEach((comp, name) => {
+      comp = JSON.parse(JSON.stringify(comp)); // create deep clone
       delete comp.parent; // remove parent atribute
       s[name] = comp;
     });
-    return JSON.stringify(s,null,"  ");
+    return JSON.stringify(s, null, '  ');
   }
-};
-
+}
 
 const handlerEntity = {
-
   // has:(target, property, receiver) => {
   //   if (target._components.has(property)) return true;
   //   return Reflect.has(target,property, receiver);
   // },
-  
+
   getOwnPropertyDescriptor: (target, property, receiver) => {
     //console.log('getOwnPropertyDescriptor',target, property);
-    return Reflect.getOwnPropertyDescriptor(target, property, receiver)
+    return Reflect.getOwnPropertyDescriptor(target, property, receiver);
   },
 
   get: (target, property, receiver) => {
-
-    if (target?._components?.has(property)) 
+    if (target?._components?.has(property))
       return target._components.get(property);
-    
-    //console.log(target.id, property);
-    if (property == 'tags') return target.tags
 
-    //if (property.substring(0,1) == '_') return false 
-    return Reflect.get(target,property, receiver);
+    //console.log(target.id, property);
+    if (property === 'tags') return target.tags;
+
+    //if (property.substring(0,1) == '_') return false
+    return Reflect.get(target, property, receiver);
   },
 
   set: (target, property, value, receiver) => {
     //console.log(value,receiver)
-   
+
     if (target?._components?.has(property)) {
       return target._components.set(property);
     }
 
-    if ( !target.hasOwnProperty(property)
-      || (typeof target[property]) == 'function' 
-      || (typeof target[property]) != (typeof value)
+    if (
+      !target.hasOwnProperty(property) ||
+      typeof target[property] == 'function' ||
+      typeof target[property] != typeof value
     ) {
-      console.error('prohibited property mutation',property,value); 
+      console.error('prohibited property mutation', property, value);
       return true;
     }
 
-    if (property == 'active' && value != target.active) {
-      ecs._cache.remove('activeEtities')
+    if (property === 'active' && value !== target.active) {
+      ecs._cache.remove('activeEtities');
     }
 
     return Reflect.set(target, property, value, receiver);
   },
 
   deleteProperty: (target, property) => {
-    console.log(deleteProperty,target.id,property)
+    console.log(deleteProperty, target.id, property);
   }
-}
+};
 
-
-iGame.states.subscribe('ecs-running','running', (newVal, oldVal) => {
+iGame.states.subscribe('ecs-running', 'running', (newVal, oldVal) => {
   //console.log('main','running',{newVal,oldVal})
 
   switch (newVal) {
     case Game.runstate.LOADING:
+      ecs.systems
+        .forEach(sys => (sys.active = false));
       break;
 
     case Game.runstate.RUNNING:
       ecs.systems
-        .filter(sys=>sys.runOnPause === false)
-        .forEach(sys=>sys.active = true);
+        .forEach(sys => (sys.active = true));
       break;
 
     case Game.runstate.PAUSED:
       ecs.systems
-        .filter(sys=>sys.runOnPause === false)
-        .forEach(sys=>sys.active = false);
-
-
+        .filter(sys => sys.runOnPause === false)
+        .forEach(sys => (sys.active = false));
       break;
   }
 
   ecs.infoSystems();
-  
 });
 
-
-export {ecs, handlerEntity}
+export { ecs, handlerEntity };
 export default ecs;

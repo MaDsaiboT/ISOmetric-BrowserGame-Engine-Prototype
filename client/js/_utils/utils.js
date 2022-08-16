@@ -58,5 +58,28 @@ export function* range(start, end) {
 export const stringReverse = str => [...str].reverse().join('');
 
 //reduce an array of strings to the highest string length
-export const getMaxStringLength = arr => arr.reduce((r, c) => r.length >= c.length ? r.length : c.length);
+export const getMaxStringLength = arr => {
+  let max = 0;
+  arr.map(str => max = Math.max(str.length, max));
+  return max;
+};
 
+
+export const easeTo = (position, targetPos, ease=0.05) => {
+  const dx = targetPos.x - position.x;
+  const dy = targetPos.y - position.y;
+  position.x += dx * ease;
+  position.y += dy * ease;
+  if ( Math.abs(dx) < 0.05 &&
+       Math.abs(dy) < 0.05
+  ) {
+    position.x = targetPos.x;
+    position.y = targetPos.y;
+  }
+};
+
+export function calcDistance(p1, p2) {
+  let a = p1.x - p2.x;
+  let b = p1.y - p2.y;
+  return Math.sqrt(a * a + b * b);
+}

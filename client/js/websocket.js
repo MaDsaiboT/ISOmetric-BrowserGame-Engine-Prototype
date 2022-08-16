@@ -1,24 +1,24 @@
-class Websocket{
-  constructor(){
+class Websocket {
+  constructor() {
     let ws = new WebSocket('ws://127.0.0.1:7429/socket');
-    ws.onopen = function() {
+    ws.onopen = function () {
       // Web Socket is connected, send data using send()
       let msg = '"Message to send"';
       ws.send(msg);
-      console.log("Message is sent...", msg);
+      console.log('Message is sent...', msg);
     };
 
-    ws.onmessage = function (evt) { 
+    ws.onmessage = function (evt) {
       var msg = evt.data;
-      console.log("Message is received...",msg);
+      console.log('Message is received...', msg);
     };
 
-    ws.onclose = function() { 
-      
+    ws.onclose = function () {
       // websocket is closed.
-      console.log("Connection is closed..."); 
+      console.log('Connection is closed...');
     };
   }
 }
 
+export { Websocket };
 export default Websocket;

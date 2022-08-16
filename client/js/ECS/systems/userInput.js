@@ -37,34 +37,33 @@ class userInput {
     this.wheelUpdateOn  = 0;
     this.wheelValue   = 0;
 
-    this.isMouseActive  = false;
-    this.leftMouse    = false;
-    this.middleMouse  = false;
-    this.rightMouse   = false;
-    this.coord      = {
-      x:0,  //current position
-      y:0,
-      ix:0, //initial down position
-      iy:0,
-      px:0, //previous move position
-      py:0,
-      idx:0,  //Delta since inital
+    this.isMouseActive = false;
+    this.leftMouse     = false;
+    this.middleMouse   = false;
+    this.rightMouse    = false;
+    this.coord         = {
+        x:0, //current position
+        y:0,
+       ix:0, //initial down position
+       iy:0,
+       px:0, //previous move position
+       py:0,
+      idx:0, //Delta since inital
       idy:0,
-      pdx:0,  //Delta since previous
+      pdx:0, //Delta since previous
       pdy:0
     };
 
     this.bound = new Map(); 
-
-    this.bound.set('mousedown', this.onMouseDown.bind(this) );
-    this.bound.set('mouseup',   this.onMouseUp.bind(this)   );
-
+    this.bound.set( 'mousemove', this.onMouseMove.bind(this) );
+    this.bound.set( 'mousedown', this.onMouseDown.bind(this) );
+    this.bound.set( 'mouseup',   this.onMouseUp.bind(this)   );
 
     window.addEventListener( 'keydown', e => this.onKeyDown(e) );
     window.addEventListener( 'keyup',   e => this.onKeyUp(e)   );
 
     iGame.states.subscribe('input-running','running',(newVal,oldVal) => {
-      console.log(`input-running ${oldVal} >> ${newVal}`);
+      //console.log(`input-running ${oldVal} >> ${newVal}`);
 
       switch (newVal) {
         
@@ -73,7 +72,6 @@ class userInput {
           break;
 
         case Game.runstate.LOADING:
-
           this.unBindEvents();
           break;
       }
@@ -83,7 +81,7 @@ class userInput {
   }
 
   bindEvents(){
-    console.log('bind events');
+    //console.log('bind events');
     //window.addEventListener( 'mouseout', e => this.OnMouseOut(e) );
     //ui.main.addEventListener( 'mousemove', e => this.OnMouseMove(e) );
     //
@@ -91,18 +89,19 @@ class userInput {
     //console.log('input bind events',ui.main);
 
     ui.main.addEventListener("contextmenu", this.onContextMenu );
-    ui.main.addEventListener("mousedown",   this.bound.get('mousedown'));
-    ui.main.addEventListener("mouseup",     this.bound.get('mouseup'));
-   // ui.main.addEventListener("mouseout",    this.onMouseUp.bind(this) );
-   // ui.main.addEventListener("mousewheel",  this.onMouseWheel.bind(this) );
+    this.bound.forEach((callback, eventName) => {
+      ui.main.addEventListener(eventName, callback);
+    });
+  
 
+    //ui.main.addEventListener("mouseout",    this.onMouseUp.bind(this) );
+    //ui.main.addEventListener("mousewheel",  this.onMouseWheel.bind(this) );
   }
 
   unBindEvents(){
-    console.log('un-bind events');
-    //ui.main.removeEventListener("contextmenu", this.onContextMenu );
-    ui.main.removeEventListener("mousedown",   this.bound.get('mousedown') );
-    ui.main.removeEventListener("mouseup",     this.bound.get('mouseup'));
+    this.bound.forEach((callback, eventName) => {
+      ui.main.removeEventListener(eventName, callback);
+    });
   }
 
 
@@ -128,8 +127,8 @@ class userInput {
   }
 
   onMouseDown(e){
-    e.preventDefault(); 
-    e.stopPropagation();
+    //e.preventDefault(); 
+    //e.stopPropagation();
 
     this.coord.ix  = this.coord.px  = this.coord.x   = e.x;
     this.coord.iy  = this.coord.py  = this.coord.y   = e.y;
@@ -147,7 +146,7 @@ class userInput {
     this.isMouseActive = (this.leftMouse || this.middleMouse || this.rightMouse);
   }
 
-  onMouseUp(e){
+  onMouseUp(e) {
     e.preventDefault(); 
     e.stopPropagation();
     this.updateCoords(e);
@@ -161,6 +160,11 @@ class userInput {
 
     this.isMouseActive = (this.leftMouse || this.middleMouse || this.rightMouse);
 
+  }
+
+
+  onMouseMove(e){
+    this.updateCoords(e);
   }
 
 
@@ -233,4 +237,5 @@ class userInput {
 
 const iUserInput = new userInput();
 
+export { userInput };
 export default userInput;

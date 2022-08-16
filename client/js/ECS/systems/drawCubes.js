@@ -11,7 +11,7 @@ const system_drawCubes = () => {
     .filter(ent => ent.has('position'))
     .forEach(entity => {
       if (entity.tags.has('selected'))
-        iMap.drawTile(entity.position, 70, ctxInteract, viewPortOffset);
+        iMap.drawTile(entity.position, 80, ctxInteract,viewPortOffset);
 
       iMap.drawCaracter(entity.position, 70, ctxInteract, viewPortOffset);
     });

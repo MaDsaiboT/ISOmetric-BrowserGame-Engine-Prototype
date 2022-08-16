@@ -34,4 +34,5 @@ const math = {
   easeOutQuad: (t,b,s) => -c*t*(t-2) +s,
 };
 
-export default math
+export { math };
+export default math;
