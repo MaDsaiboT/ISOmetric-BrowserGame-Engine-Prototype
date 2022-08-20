@@ -130,6 +130,8 @@ class userInput {
     //e.preventDefault(); 
     //e.stopPropagation();
 
+    if (e.target !== ui.main) return;
+
     this.coord.ix  = this.coord.px  = this.coord.x   = e.x;
     this.coord.iy  = this.coord.py  = this.coord.y   = e.y;
     this.coord.pdx = this.coord.idx = this.coord.pdy = this.coord.idy = 0;
@@ -149,6 +151,9 @@ class userInput {
   onMouseUp(e) {
     e.preventDefault(); 
     e.stopPropagation();
+
+    if (e.target !== ui.main) return;
+
     this.updateCoords(e);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
