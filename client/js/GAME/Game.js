@@ -38,6 +38,12 @@ let states = {
     name = states._observers.length + name;
     //console.log('Game.states ',`add observer ${name} for property ${property}` );
     //callback = callback.bind(this);
+    //
+    const dublicate = states._observers.find(o => o.name === name);
+    if (dublicate) {
+      console.warn(`Game - observer with ${name} already exists`);
+      return;
+    };
     states._observers.push({ name, property, callback});
     //console.log('subscribe',{property, callback})
     //console.log({obs})
