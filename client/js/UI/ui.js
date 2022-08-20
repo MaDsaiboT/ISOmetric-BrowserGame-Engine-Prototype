@@ -82,7 +82,10 @@ function mousemove(e, iGame) {
 
   Object.assign(ui.states.mapPos,s2m);
 
-  if (ui.states.mapPos.x < 0 || ui.states.mapPos.y < 0) return;
+  if (ui.states.mapPos.x < 0 || ui.states.mapPos.y < 0) {
+    ui.elemToolTip.classList.add('hidden');
+    return;
+  }
 
   ui.elemToolTip.classList.remove('hidden');
   ui.elemToolTip.style.top = e.y + 'px';
