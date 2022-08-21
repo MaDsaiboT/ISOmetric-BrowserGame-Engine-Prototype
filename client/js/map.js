@@ -18,8 +18,7 @@ class map {
 
     this.drawRuler = false;
 
-
-    this.highestLayerChace = new Map();
+    this.highestLayerChache = new Map();
 
     map.instance = this;
     //console.log(ctxMapBuffer.canvas.height);
@@ -291,8 +290,8 @@ class map {
     const key = JSON.stringify({x,y});
 
     if (this.mapDataKeys === null) return ret;
-    if (this.highestLayerChace.has(key)) {
-      const layer = this.highestLayerChace.get(key);
+    if (this.highestLayerChache.has(key)) {
+      const layer = this.highestLayerChache.get(key);
       //console.log({x,y}, layer);
       return layer;
     }
@@ -304,7 +303,7 @@ class map {
         break;
       }
     }
-    this.highestLayerChace.set(key, ret);
+    this.highestLayerChache.set(key, ret);
     return ret;
   }
 
