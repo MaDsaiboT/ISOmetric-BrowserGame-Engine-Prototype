@@ -95,30 +95,21 @@ function mousemove(e, iGame) {
     ui.states.mapPosLast.x !== ui.states.mapPos.x ||
     ui.states.mapPosLast.y !== ui.states.mapPos.y
   ) {
-    ui.states.mapPos.layer = main.iMap.getHighestLayer(ui.states.mapPos.x, ui.states.mapPos.y);
+    ui.states.mapPos.layer = main.iMap.getHighestLayer(ui.states.mapPos);
 
     if (ui.states.mapPos.layer <= -1) {
       ui.elemToolTip.classList.add('hidden');
       return;
     }
 
-    const hasLeft = main.iMap.tileHasNeighborLeft(
-      ui.states.mapPos.x,
-      ui.states.mapPos.y,
-      ui.states.mapPos.layer
-    );
+    const hasLeft  = main.iMap.tileHasNeighborLeft(ui.states.mapPos);
+    const hasRight = main.iMap.tileHasNeighborRight(ui.states.mapPos);
 
-    const hasRight = main.iMap.tileHasNeighborRight(
-      ui.states.mapPos.x,
-      ui.states.mapPos.y,
-      ui.states.mapPos.layer
-    );
+    const layerName = main.iMap.mapDataKeys[ ui.states.mapPos.layer];
 
-    
-   
 
     ui.elemToolTip.innerHTML = `X:${ui.states.mapPos.x} Y:${ui.states.mapPos.y}`;
-    ui.elemToolTip.innerHTML += `<br/> layer:${ui.states.mapPos.layer}`;
+    ui.elemToolTip.innerHTML += `<br/> layer:${ui.states.mapPos.layer}:${layerName}`;
     ui.elemToolTip.innerHTML += `<br/> left:${hasLeft}`;
     ui.elemToolTip.innerHTML += `<br/> right:${hasRight}`;
 

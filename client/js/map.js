@@ -285,7 +285,8 @@ class map {
    * @param      {int}  y map coordinate
    * @return     {int}  The highest layer. (min 0)
    */
-  getHighestLayer(x, y) {
+  getHighestLayer(pos) {
+    const {x, y} = pos;
     let ret = -1;
     const key = JSON.stringify({x,y});
 
@@ -364,9 +365,10 @@ class map {
    * @param      {int}  layerIndex  The layer index
    * @return     {boolean}
    */
-  tileHasNeighborLeft(x, y, layerIndex) {
+  tileHasNeighborLeft(pos) {
+    const {x, y, layer} = pos;
     if (!this.mapData) return false;
-    const layerName = this.mapDataKeys[layerIndex];
+    const layerName = this.mapDataKeys[layer];
     if (this.mapData?.[layerName]?.[y + 1]?.[x] > 0) return true;
     return false;
   }
@@ -379,9 +381,10 @@ class map {
    * @param      {int}  layerIndex  The layer index
    * @return     {boolean}
    */
-  getTileNeighborLeft(x, y, layerIndex) {
+  getTileNeighborLeft(pos) {
+    const {x, y, layer} = pos;
     if (!this.mapData) return 0;
-    const layerName = this.mapDataKeys[layerIndex];
+    const layerName = this.mapDataKeys[layer];
     return this.mapData?.[layerName]?.[y + 1]?.[x] | 0;
   }
 
@@ -393,10 +396,12 @@ class map {
    * @param      {int}  layerIndex  The layer index
    * @return     {boolean}
    */
-  tileHasNeighborRight(x, y, layerIndex) {
-    if (!this.mapData) return false;
-    const layerName = this.mapDataKeys[layerIndex];
-    if (this.mapData?.[layerName]?.[y]?.[x + 1]) return true;
+  tileHasNeighborRight(pos) {
+    const {x, y, layer} = pos;
+    //if (!this.mapData) return false;
+    const layerName = this.mapDataKeys[layer];
+
+    if (this.mapData[layerName]?.[y]?.[x + 1]) return true;
     return false;
   }
 
@@ -408,9 +413,10 @@ class map {
    * @param      {int}  layerIndex  The layer index
    * @return     {boolean}
    */
-  getTileNeighborRight(x, y, layerIndex) {
+  getTileNeighborRight(pos) {
+    const {x, y, layer} = pos;
     if (!this.mapData) return 0;
-    const layerName = this.mapDataKeys[layerIndex];
+    const layerName = this.mapDataKeys[layer];
     return this.mapData?.[layerName]?.[y]?.[x + 1] | 0;
   }
 
@@ -534,11 +540,12 @@ class map {
     context.stroke();
     context.fill();
 
+    const layer = layerIndex;
     if (this.drawSides) {
       (() => {
-        const neighborLeft = this.getTileNeighborLeft(x, y, layerIndex);
+        const neighborLeft = this.getTileNeighborLeft({x, y, layer});
         if (!([0, 2].indexOf(neighborLeft) > -1)) return;
-        if (type == 2 && neighborLeft == 2) return;
+        if (type === 2 && neighborLeft === 2) return;
         // draw left
         lig = 70;
         context.beginPath();
@@ -558,7 +565,7 @@ class map {
       })();
 
       (() => {
-        const neighborRight = this.getTileNeighborRight(x, y, layerIndex);
+        const neighborRight = this.getTileNeighborRight({x, y, layer});
         if (!([0, 2].indexOf(neighborRight) > -1)) return;
 
         if (type == 2 && neighborRight == 2) return;
