@@ -119,18 +119,18 @@ class userInput {
     this.coord.idy = this.coord.y - this.coord.iy; 
   }
 
-  onContextMenu(e){ 
-    //console.log('onContextMenu');
-    e.preventDefault(); 
-    e.stopPropagation(); 
+  onContextMenu(e) {
+    if (e.target !== ui.main) return;
+    e.preventDefault();
+    e.stopPropagation();
+
     return false; 
   }
 
-  onMouseDown(e){
-    //e.preventDefault(); 
-    //e.stopPropagation();
-
+  onMouseDown(e) {
     if (e.target !== ui.main) return;
+    e.preventDefault();
+    e.stopPropagation();
 
     this.coord.ix  = this.coord.px  = this.coord.x   = e.x;
     this.coord.iy  = this.coord.py  = this.coord.y   = e.y;
@@ -149,10 +149,9 @@ class userInput {
   }
 
   onMouseUp(e) {
-    e.preventDefault(); 
-    e.stopPropagation();
-
     if (e.target !== ui.main) return;
+    e.preventDefault();
+    e.stopPropagation();
 
     this.updateCoords(e);
 
