@@ -58,7 +58,7 @@ class map {
    */
   async load(name = null) {
     if (name) this.name = name;
-    await fetch(`./json/tileMaps/${this.name}.json`)
+    await fetch(`/json/tileMaps/${this.name}.json`)
       .then((response) => response.json())
       .then((jsondata) => this.normaliseMapData(jsondata))
       .then((jsondata) => {
