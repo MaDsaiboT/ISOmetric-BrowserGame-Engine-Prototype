@@ -3,6 +3,7 @@
 import * as main from '../main.js';
 import * as utils from '../_utils/utils.js';
 import { Game } from '../GAME/Game.js';
+import { router } from './router.js';
 //import { map } from '../map.js';
 
 // const iMap = new map;
@@ -149,6 +150,7 @@ ui.init = iGame => {
 
     switch (newVal) {
       case Game.runstate.LOADING:
+        ui.main.querySelector('modal-window')?.remove();
         ui.elemToolTip.classList.add('hidden');
         ui.wrapper.classList.add('loading');
         ui.main.style.background = 'rgba(33,33,33,1)';
@@ -189,6 +191,42 @@ ui.init = iGame => {
     _ => iGame.states.running !== Game.runstate.LOADING
   );
 };
+
+ui.getModalWindow = async () => {
+  ui.modalWindow = ui.main.querySelector('modal-window');
+  if (!ui.modalWindow) {
+    await import('./webComponents/modalWindow.js');
+    ui.modalWindow = document.createElement('modal-window');
+    ui.modalWindow.innerHTML = '';
+    ui.main.append(ui.modalWindow);
+  }
+  return ui.modalWindow;
+};
+
+
+let lastCat = null;
+router.addObserver({
+  name: 'settings',
+  callback: async (params, cur, last) => {
+    if (params.category && params.category === lastCat) return;
+
+    //console.log(cur,last,params);
+    await ui.getModalWindow();
+
+    let compSettings = ui.modalWindow.querySelector('component-settings');
+    if (!compSettings) {
+      //console.log('import settings');
+      await import('./webComponents/settings/settingsMenu.js');
+      compSettings = document.createElement('component-settings');
+      compSettings.setAttribute('category', params.category);
+      ui.modalWindow.innerHTML = '<h3 slot="header">settings</h3>';
+      ui.modalWindow.append(compSettings);
+    } else {
+      compSettings.setAttribute('category', params.category);
+    }
+    lastCat = params.category;
+  }
+});
 
 export { ui };
 export default ui;
