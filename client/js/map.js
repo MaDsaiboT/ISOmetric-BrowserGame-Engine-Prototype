@@ -59,9 +59,9 @@ class map {
   async load(name = null) {
     if (name) this.name = name;
     await fetch(`/json/tileMaps/${this.name}.json`)
-      .then((response) => response.json())
-      .then((jsondata) => this.normaliseMapData(jsondata))
-      .then((jsondata) => {
+      .then( response => response.json())
+      .then( jsondata => this.normaliseMapData(jsondata))
+      .then( jsondata => {
         this.mapData = jsondata;
         this.mapDataKeys = Object.keys(jsondata).reverse();
         //this.rotate();
@@ -70,9 +70,9 @@ class map {
       })
       //.then( _ => this.drawGrid() )
       //.then( _ => this.rotate() )
-      .then((_) => this.clear())
-      .then((_) => this.draw())
-      .then((_) => {});
+      .then(_ => this.clear())
+      .then(_ => this.draw())
+      //.then(_ => console.log(this.mapData));
   }
 
   /**
@@ -567,7 +567,7 @@ class map {
         const neighborRight = this.getTileNeighborRight({x, y, layer});
         if (!([0, 2].indexOf(neighborRight) > -1)) return;
 
-        if (type == 2 && neighborRight == 2) return;
+        if (type === 2 && neighborRight === 2) return;
         // draw right
         lig = 60;
         sat -= 10;
