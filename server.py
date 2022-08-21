@@ -57,6 +57,11 @@ def route_login():
 def route_signup():
   return home()
 
+@app.route('/settings')
+@app.route('/settings/<path:text>')
+def route_settings(text=None):
+  return home()
+
 @app.route('/api')
 def route_api():
   return 'test'

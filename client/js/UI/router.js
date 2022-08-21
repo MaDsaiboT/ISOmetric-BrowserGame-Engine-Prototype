@@ -1,8 +1,11 @@
+import { Game } from '../GAME/Game.js';
+
 class Router {
 
   constructor() {
     // singleton 
     if (Router.instance instanceof Router) return Router.instance; 
+    Router.instance = this;
 
     // prettier-ignore
     this.routes = [
@@ -11,9 +14,11 @@ class Router {
       {path: '/login',           name: 'login',    needsLogin: false},
       {path: '/signup',          name: 'signup',   needsLogin: false},
 
-      {path: '/logout',          name: 'logout',   needsLogin: true},
-      {path: '/profile/:name',   name: 'profile',  needsLogin: true},
-      {path: '/settings/:theme', name: 'settings', needsLogin: true}
+      {path: '/logout',             name: 'logout',   needsLogin: true},
+      {path: '/profile/:name',      name: 'profile',  needsLogin: true},
+
+      {path: '/settings/:category', name: 'settings', needsLogin: true},
+      {path: '/settings',           name: 'settings', needsLogin: true},
     ];
 
     this.baseTitle = document.title;
@@ -31,8 +36,6 @@ class Router {
     this.urlOrigin = new URL(window.location.href).origin;
 
     console.log(this.urlOrigin);
-
-    Router.instance = this;
   }
 
   #pathToRegex(path) {
@@ -60,7 +63,8 @@ class Router {
   }
 
   async route() {
-    //console.time(`route ${window.location.pathname}`)
+    const timerLable = `route ${window.location.pathname}`.padEnd(35,' ');
+    console.time(timerLable);
 
     const evaluateRoute = route => {
       // if (typeof route.condition == 'function' && !route.condition()) return {
@@ -99,16 +103,16 @@ class Router {
       //return this;
     }
 
-    console.log(`route ${location.pathname}`);
-    if (params.length) console.dir(params);
+    //console.log(`route ${location.pathname}`);
+    //if (params) console.dir(params);
     this.#onRouteChange(params);
-    //console.timeEnd(`route ${window.location.pathname}`);
+    console.timeEnd(timerLable);
     return this;
   }
 
-  navigateTo(strurl) {
+  async navigateTo(strurl) {
     let url = new URL(strurl, this.urlOrigin);
-    history.pushState(null, null, url);
+    await history.pushState(null, null, url);
     router.route();
   }
 
@@ -136,8 +140,7 @@ class Router {
   }
 
   removeObserver(id) {
-    const o = this.observers;
-    if (o.has(id)) o.delete(id);
+    if (this.observers.has(id)) this.observers.delete(id);
   }
 
   #onRouteChange(params) {
@@ -162,6 +165,8 @@ window.addEventListener('popstate', e => {
 
 // react to user cliking on links / submit buttons
 document.body.addEventListener('click', e => {
+  e.preventDefault();
+
   if (e.target.matches('[data-link]')) {
     e.preventDefault();
     router.navigateTo(e.target.href);
@@ -243,7 +248,7 @@ const login = async name => {
   localStorage.setItem('userName', userName);
   navUserActions?.classList?.add('loggedIn');
   await loadHTML(navUserActions, 'loggedIn.html');
-  hideContentModal();
+  if (router.routeLast.name === 'login') hideContentModal();
 
   //give the browser a chance to catch up the dom
   window.setTimeout(async () => {
@@ -310,16 +315,23 @@ router.addObserver({
   }
 });
 
-router.addObserver({
-  name: 'settings',
-  callback: (params, cur, last) => {
-    import('./webComponents/settings.js')
-      .then((content.innerHTML = '<component-settings>'))
-      .then(showContentModal());
+const iGame = new Game();
+iGame.states.subscribe('router-running', 'running', (newVal, oldVal) => {
+  //console.log('ui','running',{newVal,oldVal})
+
+  switch (newVal) {
+    case Game.runstate.LOADING:
+      hideContentModal();
+      break;
+
+    case Game.runstate.RUNNING:
+      if (oldVal === Game.runstate.LOADING) router.route();
+      break;
+
+    case Game.runstate.PAUSED:
+      break;
   }
 });
-
-router.route();
 
 export { router };
 export default router;
