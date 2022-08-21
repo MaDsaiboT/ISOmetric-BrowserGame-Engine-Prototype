@@ -1,14 +1,16 @@
-import { math } from '../../_utils/math.js'; // import our niftly litlle math libary
+import { math }   from '../../_utils/math.js'; // import our niftly litlle math libary
+import { router } from '../router.js';
 
 export default class modalWindow extends HTMLElement {
   static html = `
     <header>
       <slot name="header"></slot>
+      <slot name="subHeader"></slot>
       <closer></closer>
     </header>
-    <contend>
+    <content>
       <slot></slot>
-    </contend>
+    </content>
     <footer>
       <span>log custom elements</span>
     </footer>
@@ -48,12 +50,18 @@ export default class modalWindow extends HTMLElement {
       white-space: nowrap;
     }
 
-    header  ::slotted(*){
+    header ::slotted(h3){
       white-space: nowrap;
       display: block;
       background: transparent;
       padding: 0px 0px;
       margin: 0 0;
+    }
+
+    header ::slotted(span){
+      margin-left: 20px;
+      font-size: 0.8rem;
+      color: #333;
     }
 
     closer {
@@ -74,12 +82,14 @@ export default class modalWindow extends HTMLElement {
       color: #111;
     }
 
-    contend{
+    content{
+      min-height: 300px;
       display: block;
       background: rgba( 22, 22, 22, 0.8);
       backdrop-filter: blur(4px) grayscale(0.8);
       color:      rgba(200,200,200, 0.8);
       padding: 15px 15px 5px 15px;
+      transition: all 3s ease;
     }
 
     footer{
@@ -116,10 +126,7 @@ export default class modalWindow extends HTMLElement {
   }
 
   async connectedCallback() {
-    //console.log('modalWindow','connected');
-    //this.style.top = '10vh';
-    //this.style.left = `calc(50vw + ${this.offset.y}px)`;
-    //this.style.transform = 'translateX(-50%)';
+    console.log('modalWindow','connected');
     this.style.transform = 'translateY(-100%)';
     this.style.opacity = '0.3';
 
@@ -173,6 +180,7 @@ export default class modalWindow extends HTMLElement {
   }
 
   open() {
+    //console.log('open');
     this.style.transform = 'translateY(0%)';
     this.style.opacity   = '1';
   }
@@ -217,6 +225,7 @@ export default class modalWindow extends HTMLElement {
       this.mutationObserver.disconnect();
     }
     this.#unbindEvents();
+    if (location.pathname !== '/') router.navigateTo('/');
   }
 }
 

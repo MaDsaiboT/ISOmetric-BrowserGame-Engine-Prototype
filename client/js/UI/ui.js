@@ -4,6 +4,7 @@ import * as main from '../main.js';
 import * as utils from '../_utils/utils.js';
 import { Game } from '../GAME/Game.js';
 import { router } from './router.js';
+import { auth } from './auth.js';
 //import { map } from '../map.js';
 
 // const iMap = new map;
