@@ -1,4 +1,4 @@
-import math from '../../_utils/math.js' // import our niftly litlle math libary 
+import math from '../../_utils/math.js'; // import our niftly litlle math libary 
 
 export default class DisplayDirectionalKeys extends HTMLElement {
 
@@ -80,26 +80,27 @@ export default class DisplayDirectionalKeys extends HTMLElement {
 
   constructor() {
     super();
+    const self = DisplayDirectionalKeys;
     this.attachShadow({mode:'open'});
 
     const style = document.createElement('style');
 
     this.wrapper = document.createElement('div');
-    this.wrapper.classList.add('wrapper')
+    this.wrapper.classList.add('wrapper');
 
     this.up     = document.createElement('div');
     this.down   = document.createElement('div');
     this.left   = document.createElement('div');
     this.right  = document.createElement('div');
 
-    [this.up,this.down,this.left,this.right].forEach(
+    [this.up, this.down, this.left, this.right].forEach(
       elm=>{
         elm.classList.add('key');
         this.wrapper.appendChild(elm);
       }
     );
 
-    this.up.classList.add('up')
+    this.up.classList.add('up');
     this.up.textContent = '↑';
 
     this.down.classList.add('down');
@@ -111,7 +112,7 @@ export default class DisplayDirectionalKeys extends HTMLElement {
     this.right.classList.add('right');
     this.right.textContent = '→';
 
-    style.innerHTML = DisplayDirectionalKeys.css;
+    style.innerHTML = self.css;
     //fill.classList.add('fill');
 
     this.shadowRoot.append(style,this.wrapper);
@@ -139,18 +140,18 @@ export default class DisplayDirectionalKeys extends HTMLElement {
       this.wrapper.classList.add('hidden');
     }
 
-    if (this.keyUp) this.up.classList.add('pressed') 
-    else            this.up.classList.remove('pressed')
+    if (this.keyUp)    this.up.classList.add('pressed');
+    else               this.up.classList.remove('pressed');
 
-    if (this.keyDown) this.down.classList.add('pressed') 
-    else              this.down.classList.remove('pressed')
+    if (this.keyDown)  this.down.classList.add('pressed'); 
+    else               this.down.classList.remove('pressed');
 
-    if (this.keyLeft) this.left.classList.add('pressed') 
-    else              this.left.classList.remove('pressed')
+    if (this.keyLeft)  this.left.classList.add('pressed');
+    else               this.left.classList.remove('pressed');
 
-    if (this.keyRight) this.right.classList.add('pressed') 
-    else               this.right.classList.remove('pressed')
+    if (this.keyRight) this.right.classList.add('pressed'); 
+    else               this.right.classList.remove('pressed');
   } 
 }
 
-customElements.define('display-directional-keys',DisplayDirectionalKeys)
+customElements.define('display-directional-keys',DisplayDirectionalKeys);
