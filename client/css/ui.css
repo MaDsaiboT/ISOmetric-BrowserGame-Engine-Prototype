@@ -124,30 +124,6 @@
   user-select: none;
 }
 
-#ui div.menu{
-  color:  #999;
-  background: rgba(30,30,30,0.9);
-  margin: auto;
-  margin-top: 20px;
-  width: 300px;
-  height: 200px;
-  flex-grow: 1;
-  border:  1px solid white;
-  border-radius: 7px;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-#ui main.paused div.menu h1 {
-  color: white;
-  letter-spacing: 3;
-  text-transform: uppercase;
-  margin: 0;
-  padding: 5px 10px ;
-  border-bottom: 1px solid white;
-  user-select: none;
-}
-
 #ui #console {
   background: rgba(30,30,30,0.9);
   backdrop-filter: blur(2.5px) grayscale(0.7);
