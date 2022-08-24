@@ -1,7 +1,9 @@
+import { component } from './_component.js';
+
 import { math }   from '../../_utils/math.js'; // import our niftly litlle math libary
 import { router } from '../router.js';
 
-export default class modalWindow extends HTMLElement {
+export default class modalWindow extends component {
   static html = `
     <header>
       <slot name="header"></slot>
@@ -11,9 +13,6 @@ export default class modalWindow extends HTMLElement {
     <content>
       <slot></slot>
     </content>
-    <footer>
-      <span>log custom elements</span>
-    </footer>
   `;
 
   static css = `
@@ -90,33 +89,14 @@ export default class modalWindow extends HTMLElement {
       color:      rgba(200,200,200, 0.8);
       padding: 15px 15px 5px 15px;
       transition: all 3s ease;
-    }
-
-    footer{
-      font-size: 0.7rem;
-      white-space: nowrap;
-      overflow: hidden;
-      display: block;
-      background: rgba( 22, 22, 22, 0.9);
-      backdrop-filter: blur(4px) grayscale(0.8);
-      color:      rgba(200,200,200, 0.8);
-      padding: 2px 5px;
-      min-height: 5px;
       border-bottom-right-radius: 5px;
       border-bottom-left-radius: 5px;
     }
-
-    footer>span{
-      cursor: pointer;
-    }
-
 
   `;
 
   // private fields
   #closer = null;
-  #boundEvents = [];
-
   #elemDebug = null;
 
   constructor() {
@@ -126,7 +106,7 @@ export default class modalWindow extends HTMLElement {
   }
 
   async connectedCallback() {
-    console.log('modalWindow','connected');
+    //console.log('modalWindow','connected');
     this.style.transform = 'translateY(-100%)';
     this.style.opacity = '0.3';
 
@@ -143,35 +123,16 @@ export default class modalWindow extends HTMLElement {
     element_html.innerHTML = modalWindow.html;
 
     await this.shadowRoot.append(element_css, element_html);
-    this.#elemDebug = this.shadowRoot.querySelector('footer>span');
-    //shadowRoot.innerHTML = modalWindow.html;
 
     this.#closer = shadowRoot.querySelector('header closer');
     this.#closer.innerHTML = closer_svg;
 
-    this.#boundEvents.push([this, 'transitionend', this.#transitionEnd]);
-    this.#boundEvents.push([this.#elemDebug, 'click', this.debug]);
-    this.#boundEvents.push([this.#closer, 'click', this.close]);
-    //this.#boundEvents.push([this, 'DOMSubtreeModified', this.#onContentChange]);
+    this.boundEvents.push([this, 'transitionend', this.#transitionEnd]);
+    this.boundEvents.push([this.#elemDebug, 'click', this.debug]);
+    this.boundEvents.push([this.#closer, 'click', this.close]);
 
-    //this.mutationObserver = new MutationObserver(this.#onContentChange);
-
-    //this.mutationObserver.observe(this, { childList: true });
-    this.#bindEvents();
+    super.connectedCallback();
     this.open();
-  }
-
-  #bindEvents() {
-    this.#boundEvents.forEach(([element, event, callback]) => {
-      element.addEventListener(event, callback.bind(this));
-    });
-  }
-
-  #unbindEvents() {
-    //console.log('#unbindEvents');
-    this.#boundEvents.forEach(([element, event, callback]) => {
-      element.removeEventListener(event, callback);
-    });
   }
 
   #transitionEnd() {
@@ -191,40 +152,8 @@ export default class modalWindow extends HTMLElement {
     this.style.opacity   = '0.3';
   }
 
-  #onContentChange(mutationList, observer){
-    //console.log('content changed');
-    for (const mutation of mutationList) {
-      if (mutation.type === 'childList' && mutation.addedNodes.length) {
-        const list = new Set([...mutation.addedNodes]
-          .map(i=>i.nodeName.toLowerCase())
-          .filter(n=>n.includes('-')));
-       if (!list.size) continue;
-       list.forEach(name=>{
-        if (!!customElements.get(name)) {
-          //console.warn(`no class loaded for customElement <${name}>`);
-        }
-       });
-      }
-    }
-  }
-
-  debug(){
-    const cElems = new Set(Array
-    .from(document.querySelectorAll('*'))
-    .map(element => element.nodeName.toLowerCase())
-    .filter(name => name.includes('-')));
-    console.dir(cElems);
-    console.dir([...cElems].map(
-      name => [name, !!customElements.get(name)]
-    ));
-  }
-
   disconnectedCallback() {
-    //console.log('disconnectedCallback');
-    if (this.mutationObserver) {
-      this.mutationObserver.disconnect();
-    }
-    this.#unbindEvents();
+    super.connectedCallback();
     if (location.pathname !== '/') router.navigateTo('/');
   }
 }
