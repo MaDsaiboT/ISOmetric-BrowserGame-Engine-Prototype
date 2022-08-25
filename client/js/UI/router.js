@@ -165,14 +165,16 @@ window.addEventListener('popstate', e => {
 
 // react to user cliking on links / submit buttons
 document.body.addEventListener('click', e => {
-  e.preventDefault();
+  //e.preventDefault();
 
   if (e.target.matches('[data-link]')) {
     e.preventDefault();
+    e.stopPropagation();
     router.navigateTo(e.target.href);
   }
   if (e.target.matches('[type=submit]')) {
     e.preventDefault();
+    e.stopPropagation();
     formHandler(e.target.form);
     return false;
   }
@@ -208,9 +210,9 @@ const loadHTML = async (element, filename, useCache = true, reload = false) => {
 
 const formHandler = form => {
   console.log(formHandler, form);
-  let element;
   let data = [];
-  for (element of form.elements) {
+  // collect data from each form element
+  for (const element of form.elements) {
     data.push({
       type: element.type,
       name: element.name,
@@ -218,8 +220,10 @@ const formHandler = form => {
     });
   }
 
-  if (data.find(element => element.name === 'login')) {
-    const name = data.find(element => element.name === 'name').value;
+  const submitName = data.find(e => e.type === 'submit' && e.name).name;
+  console.table(data);
+  if (submitName === 'login') {
+    const name = data.find(e => e.name === 'name').value;
     if (name.length > 2) router.navigateTo(`/login/${name}`);
   }
 };

@@ -2,23 +2,8 @@ import { router, loadHTML} from './router.js';
 import { ui }     from './ui.js';
 import { Game}    from '../GAME/Game.js';
 
-const navUserActions  = document.getElementById('userActions');
-const content         = document.getElementById('content');
-const contentClose    = document.getElementById('contentClose');
-const contentWraper   = document.getElementById('contentWraper');
-
-let isActiveContentModal = false;
-const showContentModal = () => {
-  if (isActiveContentModal) return;
-  contentWraper.classList.add('active');
-  isActiveContentModal = true;
-};
-
-const hideContentModal = () => {
-  if (!isActiveContentModal) return;
-  contentWraper.classList.remove('active');
-  isActiveContentModal = false;
-};
+// preload webComponents
+import compNavbarUser from './webComponents/navbar/user.js';
 
 
 contentClose.addEventListener('click', e => {
@@ -26,21 +11,13 @@ contentClose.addEventListener('click', e => {
   hideContentModal();
 });
 
-router.addObserver({
-  name: 'home',
-  callback: async (params, cur, last) => {
-    hideContentModal();
-  }
-});
-
-
 let modal = null;
 router.addObserver({
   name: 'login',
   callback: async (params, cur, last) => {
 
     if (!params.name) {
-      console.log(modal?.nodeName);
+      //console.log(modal?.nodeName);
       if(!modal?.nodeName) modal = await ui.getModalWindow();
       else modal.open();
       loadHTML(modal, 'logIn.html');
@@ -55,69 +32,59 @@ router.addObserver({
   callback: async params => {
     router.loggedIn = false;
     localStorage.removeItem("userName");
-    navUserActions.classList.remove('loggedIn');
-    loadHTML(navUserActions, 'loggedOut.html');
+    document.querySelector('comp-navbar-user')?.setAttribute('logged-in',false);
   }
 });
 
 router.addObserver({
   name: 'signup',
   callback: async (params, cur, last) => {
-    console.log(modal?.nodeName);
+    //console.log(modal?.nodeName);
     if(!modal?.nodeName) modal = await ui.getModalWindow();
     else modal.open();
     await loadHTML(modal, 'signUp.html');
-    
   }
 });
 
 router.addObserver({
   name: 'home',
-  callback: () => {
-    modal = null;
-  }
+  callback: () => modal = null
 },'auth-home');
 
-
+// TODO note: this is an extremely naive implementation for now
+//            no password or serverside validation is used here yet
 const login = async name => {
+  // remove whitepaces and clamp the name to a max string length of 20 characters
   const userName = name.trim().slice(0, 20);
   router.loggedIn = true;
   localStorage.setItem('userName', userName);
-  navUserActions?.classList?.add('loggedIn');
-  await loadHTML(navUserActions, 'loggedIn.html');
+  // close the modal window
   if (router.routeLast.name === 'login') modal.close();
-
-  //give the browser a chance to catch up the dom
-  window.setTimeout(async () => {
-    //update proflile link
-    document.querySelector('[href="/profile"]').href += `/${userName}`;
-    document
-      .querySelector('.avatar')
-      .setAttribute('data-label', userName.substr(0, 2).toUpperCase());
-  }, 500);
+  // notify navbar user component about the log in state
+  document.querySelector('comp-navbar-user')?.setAttribute('logged-in',true);
 };
 
 if (localStorage.userName) {
+  // if there is a nuserName in localStorage log the user in
   login(localStorage.userName);
 } else {
-  await loadHTML(navUserActions, 'loggedOut.html');
+  // if not logged in preload login and signup html snipets
   ['logIn.html', 'signUp.html'].forEach(file => loadHTML(null, file, true));
 }
 
-const iGame = new Game();
 iGame.states.subscribe('router-running', 'running', (newVal, oldVal) => {
   //console.log('ui','running',{newVal,oldVal})
 
   switch (newVal) {
-    case Game.runstate.LOADING:
-      hideContentModal();
+    case runstate.LOADING:
+      modal?.close();
       break;
 
-    case Game.runstate.RUNNING:
+    case runstate.RUNNING:
       //if (oldVal === Game.runstate.LOADING) router.route();
       break;
 
-    case Game.runstate.PAUSED:
+    case runstate.PAUSED:
       break;
   }
 });
