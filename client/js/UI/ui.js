@@ -2,7 +2,8 @@
 
 import * as main from '../main.js';
 import * as utils from '../_utils/utils.js';
-import { Game } from '../GAME/Game.js';
+
+import { iGame, runstate } from '../GAME/Game.js';
 import { router } from './router.js';
 import { auth } from './auth.js';
 //import { map } from '../map.js';
@@ -52,7 +53,7 @@ function click(e) {
  * @param  e    Event
  * @return void
  */
-function mousemove(e, iGame) {
+function mousemove(e) {
   ui.states.mouseOnUi = e.target === ui.main;
   ui.states.mouseOnContent = e.target === ui.content;
 
@@ -62,7 +63,7 @@ function mousemove(e, iGame) {
 
   if (
     !iGame ||
-    iGame.states.running === Game.runstate.LOADING ||
+    iGame.states.running === runstate.LOADING ||
     !ui.states.mouseOnUi
   ) {
     ui.elemToolTip.classList.add('hidden');
@@ -132,7 +133,7 @@ function mouseout() {
   }
 }
 
-ui.init = iGame => {
+ui.init = () => {
   //console.log(iGame);
 
   ui.headerNav01.addEventListener('click', () => {
@@ -150,7 +151,7 @@ ui.init = iGame => {
     //console.log('ui','running',{newVal,oldVal})
 
     switch (newVal) {
-      case Game.runstate.LOADING:
+      case runstate.LOADING:
         ui.main.querySelector('modal-window')?.remove();
         ui.elemToolTip.classList.add('hidden');
         ui.wrapper.classList.add('loading');
@@ -159,14 +160,14 @@ ui.init = iGame => {
         ui.minimap.classList.add('hidden');
         break;
 
-      case Game.runstate.RUNNING:
+      case runstate.RUNNING:
         ui.wrapper.classList.remove('loading');
         ui.main.style.background = 'transparent';
         ui.loader.classList.add('hidden');
         ui.minimap.classList.remove('hidden');
         break;
 
-      case Game.runstate.PAUSED:
+      case runstate.PAUSED:
         ui.main.style.background = 'rgba(0,0,0,0.3)';
         break;
     }
@@ -185,11 +186,11 @@ ui.init = iGame => {
   );
 
   iGame.states.addRenderCondition('fps', 
-    _ => iGame.states.running !== Game.runstate.LOADING
+    _ => iGame.states.running !== runstate.LOADING
   );
 
   iGame.states.addRenderCondition('frameDelta', 
-    _ => iGame.states.running !== Game.runstate.LOADING
+    _ => iGame.states.running !== runstate.LOADING
   );
 };
 

@@ -1,4 +1,4 @@
-import { Game } from '../GAME/Game.js';
+import { Game, runstate } from '../GAME/Game.js';
 
 class Router {
 
@@ -245,15 +245,15 @@ iGame.states.subscribe('router-running', 'running', (newVal, oldVal) => {
   //console.log('ui','running',{newVal,oldVal})
 
   switch (newVal) {
-    case Game.runstate.LOADING:
+    case runstate.LOADING:
       //hideContentModal();
       break;
 
-    case Game.runstate.RUNNING:
-      if (oldVal === Game.runstate.LOADING) router.route();
+    case runstate.RUNNING:
+      if (oldVal === runstate.LOADING) router.route();
       break;
 
-    case Game.runstate.PAUSED:
+    case runstate.PAUSED:
       break;
   }
 });

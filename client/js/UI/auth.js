@@ -1,6 +1,6 @@
 import { router, loadHTML} from './router.js';
-import { ui }     from './ui.js';
-import { Game}    from '../GAME/Game.js';
+import { ui }              from './ui.js';
+import { iGame, runstate }  from '../GAME/Game.js';
 
 // preload webComponents
 import compNavbarUser from './webComponents/navbar/user.js';

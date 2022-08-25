@@ -3,8 +3,6 @@
 const tileWidth = 128;
 const tileHeight = 64;
 
-import { Game }      from './GAME/Game.js';
-import { router }    from './UI/router.js';
 import { ui }        from './UI/ui.js';
 import { userInput } from './ECS/systems/userInput.js';
 import { ecs }       from './ECS/ecs.js';
@@ -12,6 +10,8 @@ import { ecs }       from './ECS/ecs.js';
 import { map }       from './map.js';
 import { Websocket } from './websocket.js';
 
+import { router }         from './UI/router.js';
+import { Game, runstate}  from './GAME/Game.js';
 
 import { math }      from './_utils/math.js'; // import our niftly litlle math libary
 
@@ -304,7 +304,7 @@ iMap.load('map001').then(
 
     drawViewport(iUserInput, false);
 
-    iGame.states.running = Game.runstate.RUNNING;
+    iGame.states.running = runstate.RUNNING;
   },
   err => console.log(err)
 );
@@ -400,7 +400,7 @@ function loop(_timeStamp) {
     right: iUserInput.arrowRight
   };
 
-  if (iGame.states.running !== Game.runstate.LOADING) {
+  if (iGame.states.running !== runstate.LOADING) {
     window.requestAnimationFrame(loop);
   } else {
     loopActive = false;
@@ -427,7 +427,7 @@ iGame.states.subscribe('main-running', 'running', (newVal, oldVal) => {
   //console.log('main','running',{newVal,oldVal})
 
   switch (newVal) {
-    case Game.runstate.RUNNING:
+    case runstate.RUNNING:
       if (!loopActive) loop(0);
       break;
   }

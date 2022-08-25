@@ -1,9 +1,7 @@
 import * as main  from '../../main.js';
 
 import { ui }   from '../../UI/ui.js';
-import { Game } from '../../GAME/Game.js';
-
-const iGame = new Game();
+import { iGame, runstate } from '../../GAME/Game.js';
 
 class userInput {
 
@@ -67,11 +65,11 @@ class userInput {
 
       switch (newVal) {
         
-        case Game.runstate.RUNNING:
+        case runstate.RUNNING:
           this.bindEvents();
           break;
 
-        case Game.runstate.LOADING:
+        case runstate.LOADING:
           this.unBindEvents();
           break;
       }

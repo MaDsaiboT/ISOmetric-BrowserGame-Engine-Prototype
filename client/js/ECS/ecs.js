@@ -1,8 +1,6 @@
 'use strict';
 import { getMaxStringLength } from '../_utils/utils.js';
-import { Game } from '../GAME/Game.js';
-
-const iGame = new Game();
+import { iGame, runstate }    from '../GAME/Game.js';
 
 // this extension to the native Map object exists to deliver deep clones
 class componentsMap extends Map {
@@ -213,17 +211,17 @@ iGame.states.subscribe('ecs-running', 'running', (newVal, oldVal) => {
   //console.log('main','running',{newVal,oldVal})
 
   switch (newVal) {
-    case Game.runstate.LOADING:
+    case runstate.LOADING:
       ecs.systems
         .forEach(sys => (sys.active = false));
       break;
 
-    case Game.runstate.RUNNING:
+    case runstate.RUNNING:
       ecs.systems
         .forEach(sys => (sys.active = true));
       break;
 
-    case Game.runstate.PAUSED:
+    case runstate.PAUSED:
       ecs.systems
         .filter(sys => sys.runOnPause === false)
         .forEach(sys => (sys.active = false));

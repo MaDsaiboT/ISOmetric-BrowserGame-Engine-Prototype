@@ -1,30 +1,39 @@
-const runstate = {
-  PAUSED: 'paused',
-  RUNNING: 'running',
+'use strict';
+import { ui } from '../UI/ui.js';
+
+const canvasMap = document.getElementById('canvasMap');
+const canvasMapBuffer = document.getElementById('canvasMapBuffer');
+const canvasInteract = document.getElementById('canvasInteract');
+
+const runstate = Object.freeze({
   LOADING: 'loading',
+  PAUSED:  'paused',
+  RUNNING: 'running',
+});
 
-  get: name => {
-    name = String(name).toUpperCase();
-    if (this.has(name)) return this[name];
-    return false;
-  },
-
-  set: name => false,
-
-  has: name => {
-    const _name = String(name).toUpperCase();
-    const res = runstate.hasOwnProperty(_name);
-    //console.log('runstate has:',name, _name,res);
-    return res;
-  }
-};
+const gamemode = Object.freeze({
+  SCENESELECT: 'scene-select',
+  EDITOR:      'editor',
+  MANAGER:     'manager',
+  STRATEGIST:  'strategist',
+  TACTITION:   'tactition',
+});
 
 let states = {
   fps: 0,
   frameDelta: 0,
   framesSinceStart: 0,
-  running: runstate.LOADING,
 
+  // enums
+  running: Object.values(runstate)[0], //LOADING
+  mode:    Object.values(gamemode)[0], //SCENESELECT
+  scene: null,
+
+  // use "enums" to declare posible values 
+  _enums: new Map([
+    ['running', runstate],
+    ['mode',    gamemode]
+  ]),
   _observers: [],
   _renderers: new Map(),
   _renderConditions: new Map(),
@@ -81,9 +90,18 @@ let handler = {
 
     if (newVal === oldVal) return true;
     //validate
-    if (typeof newVal != typeof oldVal) {
-      console.warn(
-        `invalid type ${typeof newVal} of value [${newVal}] for property ${property}`
+
+    if (target._enums.has(property)) {
+      const allowedValues = Object.values(target._enums.get(property));
+      if (allowedValues && !allowedValues.includes(value)) {
+        console.error(
+          `Game.states.set:`+
+          `\n  invalid value [${value}] for [${property}]` +
+          `\n  allowed values: [${allowedValues.join(', ')}]`
+        );
+        return true;
+      }
+    }
       );
       return true;
     }
@@ -149,8 +167,12 @@ class Game {
 
     this.states = states;
 
+    this.#bindEvents();
+  }
+
+  #bindEvents() {
     this.keyPause = 'KeyP';
-    this.keyLoad = 'KeyL';
+    this.keyLoad  = 'KeyL';
 
     window.addEventListener('keydown', e => {
       //console.log('keydown');
@@ -196,11 +218,11 @@ class Game {
 
 const iGame = new Game();
 
-iGame.states.subscribe('main-running', 'running', (newVal, oldVal) => {
+iGame.states.subscribe('game-running', 'running', (newVal, oldVal) => {
   //console.log('main','running',{newVal,oldVal})
 
   switch (newVal) {
-    case Game.runstate.LOADING:
+    case runstate.LOADING:
       console.log('\n────── loading ─────────────────');
       iGame.states.framesSinceStart = 0;
       iGame.states.frameDelta = 0;
@@ -208,11 +230,11 @@ iGame.states.subscribe('main-running', 'running', (newVal, oldVal) => {
       //console.clear();
       break;
 
-    case Game.runstate.RUNNING:
+    case runstate.RUNNING:
       console.log('\n────── running ─────────────────');
       break;
 
-    case Game.runstate.PAUSED:
+    case runstate.PAUSED:
       console.log('\n────── paused  ─────────────────');
       //const ent = ecs.entityGetByName('cube-001');
       //console.log(ent.serialize());
@@ -220,5 +242,4 @@ iGame.states.subscribe('main-running', 'running', (newVal, oldVal) => {
   }
 });
 
-
-export { Game };
+export { Game, iGame, runstate, gamemode };
