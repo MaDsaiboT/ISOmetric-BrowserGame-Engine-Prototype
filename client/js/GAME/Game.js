@@ -80,14 +80,28 @@ let states = {
 
 let handler = {
   get: (target, property) => {
+    if ([undefined,'undefined'].includes(target[property])) {
+      console.warn(
+        `Game.states.get: ` +
+        `\n  property ${property} not found`
+      );
+      return undefined;
+    };
     return target[property];
-
-    if (![undefined, 'function'].includes(typeof target[property]))
-      console.log('get', { target, property });
   },
 
-  set: (target, property, value) => {
-    if ([undefined, 'function'].includes(typeof target[property])) return;
+  set: (target, property, value, ...args) => {
+
+    //console.log(args.calle?.prototype.name);
+
+    //console.log({target, property, value});
+    if ([undefined,'undefined'].includes(target[property])) {
+      console.warn(
+        `Game.states.set: ` +
+        `\n  property ${property} not found`
+      );
+      return true;
+    };
     if (String(property).startsWith('_')) return;
     const oldVal = target[property];
     const newVal = value;
@@ -106,21 +120,17 @@ let handler = {
         return true;
       }
     }
+    else if (oldVal !== null && typeof newVal != typeof oldVal) {
+      console.error(
+        `Game.states.set:` +
+        `\n  invalid type ${typeof newVal} of value [${newVal}] `+
+        `\n  for property ${property}(${typeof property}:${target[property]})`
       );
       return true;
-    }
-    //console.log('Game.states',property,{newVal,oldVal});
-    switch (property) {
-      case 'running':
-        if (!runstate.has(newVal)) {
-          console.warn(`invalid value "${newVal}" for gameStates.runstate`);
-          return true;
-        }
-        break;
-    }
+    } 
+    
     target[property] = newVal;
-    //console.log(target._observers)
-
+    
     // -------read only data-bind ----------------
 
     //find elements
