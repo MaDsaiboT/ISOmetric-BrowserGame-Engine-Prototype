@@ -173,7 +173,22 @@ states = new Proxy(states, handler);
 
 class Game {
   static instance = null;
-  static runstate = runstate;
+  runstate = runstate;
+  #scenes  = [
+    {name: 'test001', description: 'testscene with 3 cubes moving on paths'},
+    {name: 'test002', description: ''}, 
+    {name: 'test003', description: ''}, 
+    {name: 'test004', description: ''}, 
+    {name: 'test005', description: ''}, 
+  ];
+
+  get scenes() {
+    return this.#scenes;
+  }
+
+  hasScene(name) {
+    return !!this.#scenes.find(scene => scene.name === name);
+  }
 
   constructor() {
     if (Game.instance !== null) return Game.instance;
@@ -182,6 +197,30 @@ class Game {
     this.states = states;
 
     this.#bindEvents();
+    //this.#startScene();
+  }
+
+
+  async #showSceneSelect() {
+    this.sceneWindow = ui.main.querySelector('scene-window');
+    if (!this.sceneWindow) {
+      await Promise.all([
+        import('../UI/webComponents/sceneWindow.js'),
+        import('../UI/webComponents/sceneSelect.js'),
+      ]);
+      this.sceneWindow = document.createElement('scene-window');
+      this.sceneWindow.title = 'Scene Select';
+      const select = document.createElement('scene-select');
+      this.sceneWindow.append(select);
+      ui.main.append(this.sceneWindow);
+    }
+  }
+
+  startScene() {
+    if (this.states.scene === null) {
+      console.log(`no scene`);
+      this.#showSceneSelect();
+    }
   }
 
   #bindEvents() {
@@ -272,6 +311,7 @@ iGame.states.subscribe('game-running', 'running', (newVal, oldVal) => {
 
     case runstate.RUNNING:
       console.log('\n────── running ─────────────────');
+      iGame.startScene();
       break;
 
     case runstate.PAUSED:
