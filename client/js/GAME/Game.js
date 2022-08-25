@@ -53,16 +53,19 @@ let states = {
     if (dublicate) {
       console.warn(`Game - observer with ${name} already exists`);
       return;
-    };
-    states._observers.push({ name, property, callback});
-    //console.log('subscribe',{property, callback})
-    //console.log({obs})
+    }
+    states._observers.push({ name, property, callback });
+    return name;
+  },
+
+  unsubscribe: (name) => {
+    const index = states._observers.findIndex(item => item.name === name);
+    states._observers.splice(index, 1);
   },
 
   addRenderCondition: (property, func) => {
-    if (!states._renderConditions.has(property))
+    if (!states._renderConditions.has(property)) 
       states._renderConditions.set(property, []);
-
     states._renderConditions.get(property).push(func);
   },
 
