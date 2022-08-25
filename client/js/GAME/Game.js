@@ -43,11 +43,12 @@ let states = {
     ['framesSinceStart', false]
   ]),
 
-  subscribe: (name, property, callback) => {
-    name = states._observers.length + name;
-    //console.log('Game.states ',`add observer ${name} for property ${property}` );
-    //callback = callback.bind(this);
-    //
+  subscribe: (...args) => {
+    let [name, property, callback] = args;
+    const callerModule = getCallerModule();
+    name = `${states._observers.length}-${callerModule}-${name}`;
+    //console.log('Game.states ', `add observer ${name} for property ${property}`);
+
     const dublicate = states._observers.find(o => o.name === name);
     if (dublicate) {
       console.warn(`Game - observer with ${name} already exists`);
@@ -213,6 +214,32 @@ class Game {
         console.warn(`unsuported runstate ${this.states.running}`);
         break;
     }
+  }
+}
+
+function getCallerModule(getStack) {
+  try {
+    throw new Error();
+  } catch (e) {
+    // remove origin url-parts from the stack 
+    const str     = e.stack.replaceAll(`${location.origin}/js/`, '');
+
+    // define regular expresion 
+    const pattern = /at ([^()]*)\.| at .* \(([^()]*)\./g;
+
+    // use a set to automatically delete duplicates.
+    const modules = new Set(
+
+      // create an array with all the parts of the string that match the pattern 
+      [...str.matchAll(pattern)]
+
+      // filter for just the relevant info
+      .map(i => i[2] || i[1])
+    );
+
+    // convert the set into an array and return the last element 
+    const last = [...modules].at(-1);
+    return getStack ? [last,str] : last;
   }
 }
 
