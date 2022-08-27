@@ -42,6 +42,12 @@ class ecs {
     return entity;
   }
 
+  static clear() {
+    ecs.entities = [];
+    ecs.systems = [];
+    ecs._cache.clear();
+  }
+
   static entityGetByName(name) {
     return ecs.entities.find(ent => ent.name === name) || null;
   }
