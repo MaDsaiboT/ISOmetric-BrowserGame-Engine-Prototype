@@ -63,8 +63,8 @@ class Router {
   }
 
   async route() {
+    const start = performance.now();
     const timerLable = `route ${window.location.pathname}`.padEnd(35,' ');
-    console.time(timerLable);
 
     const evaluateRoute = route => {
       // if (typeof route.condition == 'function' && !route.condition()) return {
@@ -106,7 +106,9 @@ class Router {
     //console.log(`route ${location.pathname}`);
     //if (params) console.dir(params);
     this.#onRouteChange(params);
-    console.timeEnd(timerLable);
+    const end = performance.now();
+    const delta = (end - start).toFixed(5);
+    console.trace(`${timerLable} ${delta}ms`);
     return this;
   }
 
