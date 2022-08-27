@@ -239,5 +239,5 @@ class userInput {
 
 const iUserInput = new userInput();
 
-export { userInput };
+export { userInput, iUserInput };
 export default userInput;
