@@ -1,7 +1,8 @@
 "use strict";
-import { router } from '../../router.js';
+import { router }    from '/js/UI/router.js';
+import { component } from '/js/UI/webComponents/_component.js';
 
-export default class componentSettings extends HTMLElement {
+export default class componentSettings extends component {
   static layout = ``;
 
   static css = `
@@ -103,7 +104,7 @@ export default class componentSettings extends HTMLElement {
     this.#elemContent.append(slot);
 
     this.#createMenu();
-    this.#boundEvents.push([this.#elemMenu,'click',this.#onClickMenu]);
+    this.boundEvents.push([this.#elemMenu,'click',this.#onClickMenu]);
   }
 
   connectedCallback() {
@@ -118,16 +119,15 @@ export default class componentSettings extends HTMLElement {
       this.#elemFooter
     );
 
-    this.#bindEvents();
+    super.connectedCallback();
     //const [element, event, callback] = this.#boundEvents[0];
     //this.#elemMenu.addEventListener(event, callback);
   }
 
   disconnectedCallback() {
-    router.navigateTo('/');
-    this.#unbindEvents();
+    super.disconnectedCallback();
+    if (location.pathname !== '/') router.navigateTo('/');
   }
-
 
   #getCategoryFromUrl(url) {
     url = new URL(url, location.origin);
@@ -180,7 +180,6 @@ export default class componentSettings extends HTMLElement {
     });
   }
 
-
   #clearContent() {
     while (this.firstChild) this.firstChild.remove();
   }
@@ -197,19 +196,6 @@ export default class componentSettings extends HTMLElement {
     this.append(document.createElement(tagName));
     //this.#elemContent.innerHTML = '';
     //this.#elemContent.innerHTML += `<h1>${this.#activeCategory}</h1>`;
-  }
-
-  #bindEvents() {
-    this.#boundEvents.forEach(([element, event, callback]) => {
-      element.addEventListener(event.trim(), callback.bind(this));
-    });
-  }
-
-  #unbindEvents() {
-    //console.log('#unbindEvents');
-    this.#boundEvents.forEach(([element, event, callback]) => {
-      element.removeEventListener(event.trim(), callback);
-    });
   }
 
   #createMenu() {
