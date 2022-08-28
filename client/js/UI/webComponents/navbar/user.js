@@ -1,5 +1,6 @@
 import { component } from '../_component.js';
 import { router } from '../../router.js';
+import { iGame, runstate } from '/js/GAME/Game.js';
 
 "use strict";
 export default class compNavbarUser extends component {
@@ -94,12 +95,19 @@ export default class compNavbarUser extends component {
     }
 
     nav {
-      
+      margin-top:0px;
       display:flex;
       padding: 4px;
       position: absolute;
       right: 10px;
       top: 5px;
+      transition: margin-top 0.3s ease-out;
+      pointer-events: auto;
+    }
+
+    nav.hidden{
+      margin-top: -55px;
+      pointer-events: none;
     }
 
     nav:hover {
@@ -172,12 +180,33 @@ export default class compNavbarUser extends component {
     super();
     const self = compNavbarUser;
     this.attachShadow({ mode: 'open' });
-    
-    //this.#elemStyle.textContent = self.#css;
+
+    this.#elemContent.classList.add('hidden');
+
+    this.shadowRoot.append(
+      this.#elemStyle,
+      this.#elemContent
+    );
+
+    this.runstateSub = iGame.states.subscribe('navbar-user', 'running', (newVal, oldVal) => {
+      //if (newVal === oldVal) return;
+      console.log({newVal, oldVal});
+
+      switch (newVal) {
+        case runstate.LOADING:
+          this.#elemContent.classList.add('hidden');
+          break;
+
+        case runstate.RUNNING:
+          this.#elemContent.classList.remove('hidden');
+          break;
+      }
+    });
   }
 
   async connectedCallback() {
     const self = compNavbarUser;
+    //console.trace(this.constructor.name);
 
     if (this.getAttribute('logged-in') === 'true') {
       this.#elemContent.innerHTML = self.#htmlLogedIn;
@@ -189,20 +218,13 @@ export default class compNavbarUser extends component {
       this.#elemStyle.textContent = self. #cssLogedOut;
     }
 
+    this.unbindEvents();
+    this.boundEvents = [];
 
     this.#elemContent.querySelectorAll('a[data-link]').forEach(
       e => this.boundEvents.push([e, 'click', this.#onClick])
     );
-
-    while(this.shadowRoot.firstChild) {
-      this.shadowRoot.firstChild.remove();
-    }
-
-    await this.shadowRoot.append(
-      this.#elemStyle,
-      this.#elemContent
-    );
-    super.connectedCallback();
+    this.bindEvents();
   }
 
   #onClick(e){
@@ -213,13 +235,8 @@ export default class compNavbarUser extends component {
       router.navigateTo(e.target.href);
   };
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    //console.log('disconnected Account');
-  }
-
-
   attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal === newVal) return; 
     if (name === 'logged-in') {
       this.connectedCallback();
     }
