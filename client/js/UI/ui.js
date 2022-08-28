@@ -230,5 +230,16 @@ router.addObserver({
   }
 });
 
+router.addObserver({
+  name: 'scenes',
+  callback: async (params, cur, last) => {
+
+    iGame.states.scene = '';
+    //iGame.states.running = runstate.LOADING;
+    //console.trace('sceneSelect');
+    iGame.showSceneSelect();
+  }
+});
+
 export { ui };
 export default ui;

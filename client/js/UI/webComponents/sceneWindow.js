@@ -40,13 +40,14 @@ class compSceneWindow extends component {
       min-height: 1rem;
       background: #333;
       box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      text-shadow: 2px 3px 4px #222;
       border-radius: 7px;
       padding: 5px 15px;
       margin-left: -5px;
       margin-right: -5px;
       z-index: 2;
 
-      color: rgba(250,250,250,0.6);
+      color: rgba(250, 250, 250, 0.6);
       font-size: 1rem;
     }
 
@@ -74,6 +75,8 @@ class compSceneWindow extends component {
     this.shadowRoot.innerHTML += self.#html;
     this.header = this.shadowRoot.querySelector('header');
 
+    this.boundEvents.push([this,'transitionend',this.#transitionEnd]);
+
     const subID = iGame.states.subscribe('scene-select','scene',(newVal, oldVal) => {
       console.log(`remove subscription ${subID}`);
       iGame.states.unsubscribe(subID);
@@ -82,20 +85,26 @@ class compSceneWindow extends component {
   }
 
   #transitionEnd() {
-    //console.log('transitionEnd');
+    console.log('transitionEnd');
     if (this.closed) this.remove();
   }
 
   open() {
     //console.log('open');
+    this.closed = false;
     this.style.transform = 'translateY(0%)';
     this.style.opacity   = '1';
   }
 
   close() {
+    //console.log('close');
     this.closed = true;
     this.style.transform = 'translateY(-100%)';
     this.style.opacity   = '0.3';
+  }
+
+  get title(){
+    return this.header.textContent;
   }
 
   set title(str){
@@ -103,14 +112,10 @@ class compSceneWindow extends component {
   }
 
   connectedCallback() {
-    this.boundEvents.push([this,'transitionend',this.#transitionEnd]);
     super.connectedCallback();
     this.open();
   }
 
-  disconnectedCallback(){
-    super.connectedCallback();
-  }
 }
 
 const tagName = 'scene-window';

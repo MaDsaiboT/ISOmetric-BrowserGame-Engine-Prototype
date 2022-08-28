@@ -1,9 +1,11 @@
 'use strict';
 import { ui } from '../UI/ui.js';
+import { Scene } from '../GAME/Scene.js';
 
 const canvasMap = document.getElementById('canvasMap');
 const canvasMapBuffer = document.getElementById('canvasMapBuffer');
 const canvasInteract = document.getElementById('canvasInteract');
+
 
 const runstate = Object.freeze({
   LOADING: 'loading',
@@ -27,7 +29,7 @@ let states = {
   // enums
   running: Object.values(runstate)[0], //LOADING
   mode:    Object.values(gamemode)[0], //SCENESELECT
-  scene: null,
+  scene: '',
 
   // use "enums" to declare posible values 
   _enums: new Map([
@@ -193,15 +195,11 @@ class Game {
   constructor() {
     if (Game.instance !== null) return Game.instance;
     Game.instance = this;
-
     this.states = states;
-
     this.#bindEvents();
-    //this.#startScene();
   }
 
-
-  async #showSceneSelect() {
+  async showSceneSelect() {
     this.sceneWindow = ui.main.querySelector('scene-window');
     if (!this.sceneWindow) {
       await Promise.all([
@@ -213,13 +211,41 @@ class Game {
       const select = document.createElement('scene-select');
       this.sceneWindow.append(select);
       ui.main.append(this.sceneWindow);
+    } else {
+      this.sceneWindow.open();
     }
   }
 
-  startScene() {
-    if (this.states.scene === null) {
+  async startScene() {
+    this.states.running = runstate.LOADING;
+
+    if (this.states.scene === '') {
       console.log(`no scene`);
-      this.#showSceneSelect();
+      this.showSceneSelect();
+    }
+    else {
+      
+
+      if (!Scene.scenes.has(this.states.scene)) {
+        
+        console.log(`loading scene ${this.states.scene}`);
+        const filePath = `/js/GAME/scenes/${this.states.scene}.js`;
+        try {
+          await import(filePath);
+          console.log(`${filePath} loaded`);
+        } 
+        catch(e) {
+          console.warn(e);
+          iGame.states.scene = '';
+        }
+        finally{
+          console.dir(Scene.scenes);
+        }
+      }
+
+      this.sceneWindow.close();
+      await Scene.scenes.get(this.states.scene).load();
+      
     }
   }
 
@@ -297,6 +323,10 @@ function getCallerModule(getStack) {
 
 const iGame = new Game();
 
+iGame.states.subscribe('game-scene','scene', (newVal, oldVal) => {
+  iGame.startScene();
+});
+
 iGame.states.subscribe('game-running', 'running', (newVal, oldVal) => {
   //console.log('main','running',{newVal,oldVal})
 
@@ -311,7 +341,7 @@ iGame.states.subscribe('game-running', 'running', (newVal, oldVal) => {
 
     case runstate.RUNNING:
       console.log('\n────── running ─────────────────');
-      iGame.startScene();
+      //if (iGame.states.scene === '') iGame.startScene();
       break;
 
     case runstate.PAUSED:

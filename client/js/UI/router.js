@@ -19,6 +19,8 @@ class Router {
 
       {path: '/settings/:category', name: 'settings', needsLogin: true},
       {path: '/settings',           name: 'settings', needsLogin: true},
+
+      {path: '/sceneSelect',        name: 'scenes',   needsLogin: false},
     ];
 
     this.baseTitle = document.title;
