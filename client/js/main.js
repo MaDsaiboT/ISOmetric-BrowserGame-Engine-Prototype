@@ -405,7 +405,7 @@ iGame.states.subscribe('main-running', 'running', (newVal, oldVal) => {
 });
 
 const runthis = async e => {
-  iGame.showSceneSelect();
+  iGame.startScene();
   //console.log(Object.keys(require('module')._cache));
 };
 

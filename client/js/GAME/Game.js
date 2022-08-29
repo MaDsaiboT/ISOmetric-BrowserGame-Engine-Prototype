@@ -125,7 +125,7 @@ let handler = {
     else if (oldVal !== null && typeof newVal != typeof oldVal) {
       console.error(
         `Game.states.set:` +
-        `\n  invalid type ${typeof newVal} of value [${newVal}] `+
+        `\n  invalid type ${typeof newVal} of value [${newVal}]` +
         `\n  for property ${property}(${typeof property}:${target[property]})`
       );
       return true;
@@ -197,9 +197,15 @@ class Game {
     Game.instance = this;
     this.states = states;
     this.#bindEvents();
+    const localScene = localStorage.getItem('scene');
+    if (localScene) {
+      //console.log(`found scene in local storrage -> load ${localScene}`);
+      this.states.scene = localScene; 
+    }
   }
 
   async showSceneSelect() {
+    if (this.states.scene !== '') return;
     this.sceneWindow = ui.main.querySelector('scene-window');
     if (!this.sceneWindow) {
       await Promise.all([
@@ -211,6 +217,7 @@ class Game {
       const select = document.createElement('scene-select');
       this.sceneWindow.append(select);
       ui.main.append(this.sceneWindow);
+
     } else {
       this.sceneWindow.open();
     }
@@ -221,31 +228,28 @@ class Game {
 
     if (this.states.scene === '') {
       console.log(`no scene`);
-      this.showSceneSelect();
+      await this.showSceneSelect();
     }
-    else {
-      
 
+    if (this.hasScene(this.states.scene)) {
       if (!Scene.scenes.has(this.states.scene)) {
-        
         console.log(`loading scene ${this.states.scene}`);
         const filePath = `/js/GAME/scenes/${this.states.scene}.js`;
         try {
           await import(filePath);
-          console.log(`${filePath} loaded`);
+          //console.log(`${filePath} loaded`);
         } 
         catch(e) {
           console.warn(e);
           iGame.states.scene = '';
         }
         finally{
-          console.dir(Scene.scenes);
+          //console.dir(Scene.scenes);
         }
       }
 
-      this.sceneWindow.close();
+      if (this.sceneWindow) this.sceneWindow.close();
       await Scene.scenes.get(this.states.scene).load();
-      
     }
   }
 
@@ -323,8 +327,10 @@ function getCallerModule(getStack) {
 
 const iGame = new Game();
 
-iGame.states.subscribe('game-scene','scene', (newVal, oldVal) => {
-  iGame.startScene();
+iGame.states.subscribe('game-scene','scene', async (newVal, oldVal) =>  {
+  if (newVal === oldVal) return;
+  if (newVal !== '') localStorage.setItem('scene',newVal);
+  await iGame.startScene();
 });
 
 iGame.states.subscribe('game-running', 'running', (newVal, oldVal) => {

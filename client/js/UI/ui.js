@@ -233,11 +233,15 @@ router.addObserver({
 router.addObserver({
   name: 'scenes',
   callback: async (params, cur, last) => {
-
-    iGame.states.scene = '';
-    //iGame.states.running = runstate.LOADING;
-    //console.trace('sceneSelect');
-    iGame.showSceneSelect();
+    if ( last?.name === cur.name && iGame.states.scene !== '') {
+      if (iGame.sceneWindow) iGame.sceneWindow.close();
+      router.navigateTo('/');
+    }
+    else if ( cur.name = 'scenes' ) {
+      iGame.states.scene = '';
+      iGame.states.running = runstate.LOADING;
+      iGame.showSceneSelect();
+    }
   }
 });
 
