@@ -25,15 +25,12 @@ class Router {
 
     this.baseTitle = document.title;
     this.observers = new Map();
-    this.routeFallback = {
-      route: this.routes[0],
-      result: null
-    };
-
+    this.routeFallback = this.routes[0];
+    this.history = new Array(10);
     // states
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     this.routeCurrent = this.routes[0];
-    this.routeLast = {};
+    this.routeLast = this.routes[0];
     this.loggedIn = false;
     this.urlOrigin = new URL(window.location.href).origin;
 
@@ -87,30 +84,32 @@ class Router {
     );
 
     if (!match) {
-      match = this.routeFallback;
+      match = {};
+      match.route = this.routeFallback;
+      match.result = null;
       //window.history.replaceState(null, null, this.routeFallback.route.path);
     }
 
     const params = this.#getParams(match);
+    let newRoute = (this.routeCurrent.name !== match.route.name);
 
-    if (this.routeCurrent.name !== match.route.name) {
-      this.routeCurrent = Object.assign({}, match.route);
-      document.title = `${this.baseTitle} - ${this.routeCurrent.name}`;
-    }
+    this.routeCurrent = Object.assign({}, match.route, {params});
+    this.history.unshift(this.routeCurrent);
+    this.history.pop();
+    this.routeLast = this.history[1];
 
-    if (this.routeCurrent.name !== this.routeLast?.name) {
-      this.routeLast = Object.assign({}, this.routeCurrent);
-    } else if (!params?.length) {
-      //console.timeEnd(`route ${window.location.pathname}`);
-      //return this;
-    }
+    document.title = `${this.baseTitle} - ${this.routeCurrent.name}`;
+    
+    //console.log({history:this.history});
 
     //console.log(`route ${location.pathname}`);
     //if (params) console.dir(params);
     this.#onRouteChange(params);
     const end = performance.now();
     const delta = (end - start).toFixed(5);
-    console.trace(`${timerLable} ${delta}ms`);
+    console.log(`${timerLable} ${delta}ms`);
+    //console.log(`route name: ${this.routeCurrent.name}`);
+    //console.log({cur:this.routeCurrent, last:this.routeLast});
     return this;
   }
 

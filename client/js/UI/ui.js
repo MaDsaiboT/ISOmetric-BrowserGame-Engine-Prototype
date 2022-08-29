@@ -205,19 +205,13 @@ ui.getModalWindow = async () => {
   return ui.modalWindow;
 };
 
-
-let lastCat = null;
 router.addObserver({
   name: 'settings',
   callback: async (params, cur, last) => {
-    if (params.category && params.category === lastCat) return;
-
-    //console.log(cur,last,params);
+    if (params.category && last?.params?.category === params.category) return;
     await ui.getModalWindow();
-
     let compSettings = ui.modalWindow.querySelector('component-settings');
     if (!compSettings) {
-      //console.log('import settings');
       await import('./webComponents/settings/settingsMenu.js');
       compSettings = document.createElement('component-settings');
       compSettings.setAttribute('category', params.category);
@@ -226,7 +220,6 @@ router.addObserver({
     } else {
       compSettings.setAttribute('category', params.category);
     }
-    lastCat = params.category;
   }
 });
 
